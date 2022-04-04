@@ -14,4 +14,19 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="TODO_list.txt">
+      <Filter>Header Files</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="DB_studs.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
