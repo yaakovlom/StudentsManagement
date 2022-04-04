@@ -3,7 +3,38 @@
 #include <string.h>
 
 
-print_error_and_exit(const char* error, int error_code);
+typedef struct Course {
+	char* name;
+	unsigned short mark;
+} Course;
+
+typedef struct Student {
+	long ID;
+	Course* courses;
+	char* name;
+	unsigned short marks_avrage;
+} Student;
+
+typedef struct StudentList {
+	Student* head_of_the_list;
+	Student* cursor;
+} StudentList;
+
+
+void print_error_and_exit(const char* error, int error_code);
+void print_all_students(StudentList*);
+
+int chck_student_details_types(char* details);// check details string
+Student* crate_student(long ID, char* name, Course* courses);
+Course* create_course(char* name, unsigned short mark);
+
+void sort_students_list(StudentList*);
+void add_student_in_order(StudentList*, Student*);
+void delete_student(StudentList*, long ID);
+
+void help();// print documentation for the requests server
+void play_requests_server();// for data requests
+
 
 int main()
 {
@@ -22,7 +53,7 @@ int main()
 	return 0;
 }
 
-print_error_and_exit(const char* error, int error_code)
+void print_error_and_exit(const char* error, int error_code)
 {
 	printf("%s", error);
 	exit(error_code);
