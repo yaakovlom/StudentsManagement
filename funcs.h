@@ -1,13 +1,16 @@
 
-typedef struct Course {
-	char* name;
-	unsigned short mark;
-} Course;
+#define COURSES 3
+#define LINE 320
+#define NAME 128
+
+// courses codes
+enum Courses { c_lang, comp_net, cs_f };
+char *courses_names[] = {[c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals"};
 
 typedef struct Student {
-	long ID;
-	Course* courses;
-	unsigned short marks_avrage;
+	unsigned long ID : 30;
+	unsigned short marks_avrage : 7;
+	unsigned short marks[COURSES];
 	char* first_name;
 	char* last_name;
 } Student;
@@ -19,13 +22,25 @@ typedef struct StudentList {
 
 
 void print_error_and_exit(const char* error, int error_code);
+void print_student(Student*);
 void print_all_students(StudentList*);
 
-int check_text(char* txt);// check if all the chars is 'a-z, A-Z, spaces..' (not digits or special signs)
-int check_request(char* req); // validate request
-int chck_student_details_types(char* details);// check details string for student structure
-Student* crate_student(long ID, char* name, Course* courses);
-Course* create_course(char* name, unsigned short mark);
+
+
+int find_cours_code(char* course_name);
+int is_number(char* txt);
+//// get state of a single bit
+//int check_bit(short num, short bit);
+//// change state of a single bit
+//int set_bit(short num, short bit);
+
+// check if all the chars is 'a-z, A-Z, spaces..' (not digits or special signs)
+int check_text_for_name(char* txt);
+// validate request to server
+int check_request(char* req);
+// check details string for student structure
+
+void crate_student(char* details, Student* student, char* error);
 
 void sort_students_list(StudentList*);
 void add_student_in_order(StudentList*, Student*);
