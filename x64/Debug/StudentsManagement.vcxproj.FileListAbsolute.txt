@@ -1,1 +1,2 @@
 C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe
+C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe

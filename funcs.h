@@ -1,3 +1,7 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 #define COURSES 3
 #define LINE 320
@@ -5,7 +9,6 @@
 
 // courses codes
 enum Courses { c_lang, comp_net, cs_f };
-char *courses_names[] = {[c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals"};
 
 typedef struct Student {
 	unsigned long ID : 30;
@@ -24,8 +27,7 @@ typedef struct StudentList {
 void print_error_and_exit(const char* error, int error_code);
 void print_student(Student*);
 void print_all_students(StudentList*);
-
-
+void free_student(Student* s);
 
 int find_cours_code(char* course_name);
 int is_number(char* txt);

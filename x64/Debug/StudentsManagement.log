@@ -1,10 +1,4 @@
 ﻿  funcs.c
   main.c
-C:\Users\student\Documents\C language\StudentsManagement\main.c(20,28): warning C4047: 'function': 'Student *' differs in levels of indirection from 'Student **'
-C:\Users\student\Documents\C language\StudentsManagement\main.c(20,23): warning C4024: 'crate_student': different types for formal and actual parameter 2
-C:\Users\student\Documents\C language\StudentsManagement\main.c(20,36): warning C4047: 'function': 'char *' differs in levels of indirection from 'char (*)[128]'
-C:\Users\student\Documents\C language\StudentsManagement\main.c(20,30): warning C4024: 'crate_student': different types for formal and actual parameter 3
   Generating Code...
-  LINK : C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe not found or not built by the last incremental link; performing full link
-main.obj : error LNK2005: courses_names already defined in funcs.obj
-C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe : fatal error LNK1169: one or more multiply defined symbols found
+  StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe

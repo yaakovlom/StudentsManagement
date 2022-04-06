@@ -1,11 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #include "funcs.h"
 
 
+char* courses_names[] = { [c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals" };
 
 void crate_student(char* details, Student* student, char *error)
 {
@@ -13,7 +9,7 @@ void crate_student(char* details, Student* student, char *error)
 	char* token = strtok(details, ",");
 
 	// check & set the first name
-	if (check_text_for_name(token))
+	if (!check_text_for_name(token))
 	{
 		strcpy(error, token);
 		return;
@@ -21,7 +17,7 @@ void crate_student(char* details, Student* student, char *error)
 	else
 	{
 		// try to locate memory space
-		student->first_name = (char*)malloc(strlen(token) + 1);
+		student->first_name = (char*)realloc(student->first_name, strlen(token) + 1);
 		if (student->first_name)
 			strcpy(student->first_name, token);
 		else
@@ -33,7 +29,7 @@ void crate_student(char* details, Student* student, char *error)
 	token = strtok(NULL, ",");
 
 	// check & set the last name
-	if (check_text_for_name(token))
+	if (!check_text_for_name(token))
 	{
 		strcpy(error, token);
 		return;
@@ -43,7 +39,7 @@ void crate_student(char* details, Student* student, char *error)
 		// try to locate memory space
 		if (student->last_name)
 		{
-			student->last_name = (char*)malloc(strlen(token) + 1);
+			student->last_name = (char*)realloc(student->last_name, strlen(token) + 1);
 			strcpy(student->last_name, token);
 		}
 		else
@@ -63,6 +59,7 @@ void crate_student(char* details, Student* student, char *error)
 	}
 	else
 		student->ID = temp;
+	token = strtok(NULL, ",");
 
 	// check the course
 	course_code = find_cours_code(token);
@@ -116,7 +113,16 @@ int find_cours_code(char* course_name)
 
 void print_student(Student* s)
 {
-	printf("First name: %s, Last name: %s, ID: %d, Marks: %d, %d, %d", s->first_name, s->last_name, s->ID, s->marks[0], s->marks[1], s->marks[2]);
+	printf("First name: %s, Last name: %s, ID: %d, Marks: %d, %d, %d\n", s->first_name, s->last_name, s->ID, s->marks[0], s->marks[1], s->marks[2]);
+}
+
+void free_student(Student* s)
+{
+	if (s->first_name)
+		free(s->first_name);
+	if (s->last_name)
+		free(s->last_name);
+	free(s);
 }
 
 //int set_bit(short num, short bit)
