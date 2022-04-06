@@ -1,4 +1,4 @@
-﻿  funcs.c
-  main.c
-  Generating Code...
-  StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe
+﻿  main.c
+C:\Users\student\Documents\C language\StudentsManagement\main.c(18,44): warning C4133: 'function': incompatible types - from 'StudentList *' to 'char *'
+C:\Users\student\Documents\C language\StudentsManagement\main.c(18,46): warning C4020: 'check_and_process_line': too many actual parameters
+  StudentsManagement.vcxproj -> C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe

@@ -3,9 +3,11 @@
 
 char* courses_names[] = { [c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals" };
 
-void crate_student(char* details, Student* student, char *error)
+void check_and_process_line(char* details, StudentList* list, char *error)
 {
-	int temp, course_code;
+	int id, course_code, mark;
+	char first_name[NAME], last_name[NAME];
+	Student* student;
 	char* token = strtok(details, ",");
 
 	// check & set the first name
@@ -15,17 +17,7 @@ void crate_student(char* details, Student* student, char *error)
 		return;
 	}
 	else
-	{
-		// try to locate memory space
-		student->first_name = (char*)realloc(student->first_name, strlen(token) + 1);
-		if (student->first_name)
-			strcpy(student->first_name, token);
-		else
-		{
-			strcpy(error, "Unable to locate memory.");
-			return;
-		}
-	}
+		strcpy(first_name, token);
 	token = strtok(NULL, ",");
 
 	// check & set the last name
@@ -35,33 +27,19 @@ void crate_student(char* details, Student* student, char *error)
 		return;
 	}
 	else
-	{
-		// try to locate memory space
-		if (student->last_name)
-		{
-			student->last_name = (char*)realloc(student->last_name, strlen(token) + 1);
-			strcpy(student->last_name, token);
-		}
-		else
-		{
-			strcpy(error, "Unable to locate memory.");
-			return;
-		}
-	}
+		strcpy(last_name, token);
 	token = strtok(NULL, ",");
 
-	// check & set the ID
-	temp = atoi(token);
-	if (temp <= 0 || temp > 999999999)
+	// check & set the id
+	id = atoi(token);
+	if (id <= 0 || id > 999999999)
 	{
 		strcpy(error, token);
 		return;
 	}
-	else
-		student->ID = temp;
 	token = strtok(NULL, ",");
 
-	// check the course
+	// check the course name
 	course_code = find_cours_code(token);
 	if (course_code == -1)
 	{
@@ -71,16 +49,23 @@ void crate_student(char* details, Student* student, char *error)
 	token = strtok(NULL, ",");
 
 	// check & set the course mark
-	temp = atoi(token);
-	if (temp > 100 || temp < 0)
+	mark = atoi(token);
+	if (mark > 100 || mark < 0 || (!mark && !is_number(token)))
 	{
 		strcpy(error, token);
 		return;
 	}
-	else if (temp || is_number(token)) // check digits if temp == 0
-		student->marks[course_code] = temp;
-	
-	return ;
+
+	// try to find and update this student
+	student = find_student(list, id);
+	if (student)
+		update_student(student, NULL, NULL, course_code, mark);
+	// create a new student and add to the list
+	else
+	{
+		student = create_student(first_name, last_name, id, course_code, mark);
+		add_student_in_order(list, student);
+	}
 }
 
 int is_number(char* txt)
@@ -113,7 +98,16 @@ int find_cours_code(char* course_name)
 
 void print_student(Student* s)
 {
-	printf("First name: %s, Last name: %s, ID: %d, Marks: %d, %d, %d\n", s->first_name, s->last_name, s->ID, s->marks[0], s->marks[1], s->marks[2]);
+	printf("First name: %s, Last name: %s, id: %d, Marks: %d, %d, %d\n", s->first_name, s->last_name, s->id, s->marks[0], s->marks[1], s->marks[2]);
+}
+
+void print_all_students(StudentList* list)
+{
+	while (list->head)
+	{
+		print_student(list->head);
+		list->head = list->head->next;
+	}
 }
 
 void free_student(Student* s)
@@ -125,20 +119,128 @@ void free_student(Student* s)
 	free(s);
 }
 
-//int set_bit(short num, short bit)
-//{
-//	short mask = 1;
-//	mask <<= bit;
-//	num |= mask;
-//	return num;
-//}
-//
-//int check_bit(short num, short bit)
-//{
-//	short mask = 1;
-//	mask <<= bit;
-//	return num & mask;
-//}
+void free_all_students(StudentList* list)
+{
+	while (list->head)
+	{
+		free_student(list->head);
+		list->head = list->head->next;
+	}
+}
+
+float get_student_marks_avrage(Student *student)
+{
+	float courses = 0, sum = 0;
+	for (int i = 0; i < COURSES; i++)
+		if (student->marks[i] != -1)
+		{
+			courses++;
+			sum += student->marks[i];
+		}
+	return sum / courses;
+}
+
+Student* create_student(char* first_name, char* last_name, int id, int course_code, int mark)
+{
+	// try to locate memory space for student
+	Student *student = malloc(sizeof(Student));
+	if (!student)
+		return NULL;
+	else
+	{
+		// try to locate memory space for student first name
+		student->first_name = (char*)malloc(strlen(first_name) + 1);
+		if (!student->first_name)
+			return NULL;
+		else
+		{
+			strcpy(student->first_name, first_name);
+		}
+
+		// try to locate memory space for student last name
+		student->last_name = (char*)malloc(strlen(last_name) + 1);
+		if (!student->last_name)
+			return NULL;
+		else
+		{
+			strcpy(student->last_name, last_name);
+		}
+
+		student->marks[0] = student->marks[1] = student->marks[2] = 300;// invalid marks (NULL)
+		student->marks[course_code] = mark;
+		student->marks_avrage = (float)mark;
+
+		student->next = NULL;
+
+		return student;
+	}
+}
+
+Student* update_student(Student* student, char* first_name, char* last_name, int course_code, int mark)
+{
+	if (first_name)
+	{
+		// try to relocate memory space for student first name
+		student->first_name = (char*)realloc(student->first_name, strlen(first_name) + 1);
+		if (!student->first_name)
+			return NULL;
+		else
+		{
+			strcpy(student->last_name, first_name);
+		}
+	}
+
+	if (last_name)
+	{
+		// try to relocate memory space for student last name
+		student->last_name = (char*)realloc(student->last_name, strlen(last_name) + 1);
+		if (!student->last_name)
+			return NULL;
+		else
+		{
+			strcpy(student->last_name, last_name);
+		}
+	}
+
+	if (mark)
+	{
+		student->marks[course_code] = mark;
+		student->marks_avrage = get_student_marks_avrage(student);
+	}
+	return student;
+}
+
+void add_student_in_order(StudentList* list, Student* student)
+{
+	Student* pre_head;
+
+	// if the list is empty
+	if (!list->head)
+		list->head = student;
+	else
+	{
+		while (list->head && strcmp(tolower(list->head->last_name), tolower(student->last_name)) < 0)
+		{
+			pre_head = list->head;
+			list->head = list->head->next;
+		}
+		student->next = list->head;
+		//pre_head->next = student;
+	}
+
+	list->len++;
+}
+
+Student* find_student(StudentList* list, int id)
+{
+	while (list->head)
+	{
+		if (list->head->id == id)
+			return list->head;
+		list->head = list->head->next;
+	}
+	return NULL;
+}
 
 void print_error_and_exit(const char* error, int error_code)
 {
