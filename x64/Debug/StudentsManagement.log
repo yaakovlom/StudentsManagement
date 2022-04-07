@@ -1,2 +1,5 @@
 ﻿  funcs.c
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(73,22): warning C4090: 'function': different 'const' qualifiers
+  main.c
+  Generating Code...
   StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe
