@@ -1,5 +1,5 @@
 get lines +
-check & create linked list of students
+check & create linked list of students +
 sort students
 print students
 start server

@@ -4,8 +4,8 @@
 #include <ctype.h>
 
 #define COURSES 3
-#define LINE 320
-#define NAME 128
+#define LINE 180
+#define NAME 64
 
 // courses codes
 enum Courses { c_lang, comp_net, cs_f };

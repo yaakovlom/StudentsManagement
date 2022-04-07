@@ -13,7 +13,7 @@ int find_cours_code(const char* course_name)
 
 void print_student(Student* s)
 {
-	printf("First name: %s, Last name: %s, id: %d, Marks: %d, %d, %d\n", s->first_name, s->last_name, s->id, s->marks[0], s->marks[1], s->marks[2]);
+	printf("| %-15s | %-15s | %-9d | %-3d  %-3d  %-3d |\n", s->first_name, s->last_name, s->id, s->marks[0], s->marks[1], s->marks[2]);
 }
 
 float get_student_marks_avrage(Student *student)
@@ -40,10 +40,10 @@ int is_number(const char* txt)
 
 int names_cmp(const char* name_a, const char* name_b)
 {
-	while (name_a++ || name_a++) {
-		char cmp = tolower(*name_a) - tolower(*name_b);
+	while (name_a || name_b) {
+		char cmp = tolower(*name_a++) - tolower(*name_b++);
 		if (cmp)
-			return name_b;
+			return cmp;
 	}
 	return 0;
 }
@@ -78,13 +78,19 @@ Student* create_student(const long id)
 
 StudentList* add_student_in_order(StudentList* student_list, Student* student)
 {
-
 	// if the student_list is empty
 	if (!student_list->head)
 		student_list->head = student;
+	// if the student is the smaller then the head
+	else if (names_cmp(student_list->head->last_name, student->last_name) > 0)
+	{
+		student->next = student_list->head;
+		student_list->head = student;
+	}
 	else
 	{
 		Student* pre_cursor = student_list->head, * cursor = pre_cursor->next;
+
 		while (cursor && names_cmp(cursor->last_name, student->last_name) < 0)
 		{
 			pre_cursor = cursor;
