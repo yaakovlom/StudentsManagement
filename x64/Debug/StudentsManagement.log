@@ -1,4 +1,7 @@
-﻿  main.c
-C:\Users\student\Documents\C language\StudentsManagement\main.c(18,44): warning C4133: 'function': incompatible types - from 'StudentList *' to 'char *'
-C:\Users\student\Documents\C language\StudentsManagement\main.c(18,46): warning C4020: 'check_and_process_line': too many actual parameters
-  StudentsManagement.vcxproj -> C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe
+﻿  funcs.c
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(6,33): warning C4028: formal parameter 1 different from declaration
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(31,27): warning C4028: formal parameter 1 different from declaration
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(46,17): warning C4047: 'return': 'int' differs in levels of indirection from 'const char *'
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(51,37): warning C4028: formal parameter 1 different from declaration
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(149,64): warning C4028: formal parameter 2 different from declaration
+  StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe
