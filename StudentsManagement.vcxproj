@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="funcs.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="server.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO_list.txt" />
@@ -149,7 +150,7 @@
     <None Include="DB_studs.csv" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="funcs.h" />
+    <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

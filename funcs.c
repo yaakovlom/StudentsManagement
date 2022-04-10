@@ -1,7 +1,7 @@
-#include "funcs.h"
+#include "main.h"
 
-char* courses_names[] = { [c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals" };
-char* detailes[] = { "first name", "last name", "id", "course name", "mark" };
+static char* courses_names[] = { [c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals" };
+static char* details[] = { "first name", "last name", "id", "course name", "mark" };
 
 StudentList* read_students_data()
 {
@@ -9,7 +9,7 @@ StudentList* read_students_data()
 	StudentList* student_list = (StudentList*)malloc(sizeof(StudentList));
 	int line_number = 0;
 	long id;
-	short course_code, mark, detailes_result;
+	short course_code, mark, details_result;
 	char line[LINE], first_name[NAME], last_name[NAME], *token = NULL;
 
 	if (student_list)
@@ -23,11 +23,10 @@ StudentList* read_students_data()
 				line_number++;
 				read_line(line, in_file);
 
-				// check & set all the student detailes
-				if ((detailes_result = check_line(&token, line, first_name,
-					last_name, &id, &course_code, &mark)) < 5)
+				// check & set all the student details
+				if ((details_result = check_line(&token, line, first_name, last_name, &id, &course_code, &mark)) < 5)
 				{
-					printf("Line %d in %s - %s: invalide detaile\n", line_number, detailes[detailes_result], token);
+					printf("Line %d in %s - %s: invalid detail\n", line_number, details[details_result], token);
 					continue;
 				}
 				set_line(student_list, first_name, last_name, id, course_code, mark);
@@ -46,23 +45,24 @@ StudentList* read_students_data()
 	}
 	else
 	{
-		printf("Cannot lacate memory for list\n");
+		printf("Cannot locate memory for list\n");
 		return NULL;
 	}
 }
 
-void read_line(char line[LINE], FILE* in_file)
+void read_line(char line[LINE], FILE* stream)
 {
 	char ch;
-	fgets(line, LINE, in_file);
+	fgets(line, LINE, stream);
 	if (line[strlen(line) - 1] == '\n')	line[strlen(line) - 1] = '\0';
-	else while ((ch = fgetc(in_file)) != '\n' && ch != EOF);
+	else while ((ch = fgetc(stream)) != '\n' && ch != EOF);
 }
 
-int find_cours_code(const char* course_name)
+int get_cours_code(char* course_name)
 {
+	while (isspace(*course_name)) course_name++;
 	for (int i = 0; i < COURSES; i++)
-		if (!strcmp(course_name, courses_names[i]))
+		if (course_name && !strcmp(course_name, courses_names[i]))
 			return i;
 	return -1;
 }
@@ -72,14 +72,14 @@ int check_line(const char** token, const char* line, char* first_name,
 {
 	*token = strtok(line, ",");
 	// check the first name
-	if (!check_text_for_name(*token))
+	if (!check_name(*token))
 		return 0;
 	else
 		strcpy(first_name, *token);
 	*token = strtok(NULL, ",");
 
 	// check the last name
-	if (!check_text_for_name(*token))
+	if (!check_name(*token))
 		return 1;
 	else
 		strcpy(last_name, *token);
@@ -87,22 +87,42 @@ int check_line(const char** token, const char* line, char* first_name,
 
 	// check the id
 	*id = atoi(*token);
-	if (!is_number(*token) || *id <= 0 || *id > 999999999)
+	if (!is_number(*token) || !check_id(*id))
 		return 2;
 	*token = strtok(NULL, ",");
 
 	// check the course name
-	*course_code = find_cours_code(*token);
+	*course_code = get_cours_code(*token);
 	if (*course_code == -1)
 		return 3;
 	*token = strtok(NULL, ",");
 
 	// check the course mark
 	*mark = atoi(*token);
-	if (!is_number(*token) || *mark > 100 || *mark < 0)
+	if (!is_number(*token) || !check_mark(*mark))
 		return 4;
 
 	return 5;
+}
+
+int check_name(const char* txt)
+{
+	if (!strlen(txt))
+		return 0;
+	for (int i = 0; i < strlen(txt); i++)
+		if (isdigit(txt[i]) || ispunct(txt[i]))
+			return 0;
+	return 1;
+}
+
+int check_id(const long id)
+{
+	return (id > 0 && id < 999999999);
+}
+
+int check_mark(const short mark)
+{
+	return (mark >= 0 && mark < 150);
 }
 
 void set_line(StudentList *student_list, const char *first_name,
@@ -141,16 +161,6 @@ int is_number(const char* txt)
 		return 0;
 	for (int i = 0; i < strlen(txt); i++)
 		if (!isdigit(txt[i]) || isspace(txt[i]))
-			return 0;
-	return 1;
-}
-
-int check_text_for_name(const char* txt)
-{
-	if (!strlen(txt))
-		return 0;
-	for (int i = 0; i < strlen(txt); i++)
-		if (isdigit(txt[i]) || ispunct(txt[i]))
 			return 0;
 	return 1;
 }

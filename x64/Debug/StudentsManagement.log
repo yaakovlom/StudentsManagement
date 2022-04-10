@@ -1,5 +1,15 @@
 ﻿  funcs.c
+C:\Users\Default\Documents\C\StudentsManagement\main.h(46,1): warning C4005: 'HELP_SAVE': macro redefinition
+C:\Users\Default\Documents\C\StudentsManagement\main.h(43): message : see previous definition of 'HELP_SAVE'
 C:\Users\Default\Documents\C\StudentsManagement\funcs.c(73,22): warning C4090: 'function': different 'const' qualifiers
+C:\Users\Default\Documents\C\StudentsManagement\funcs.c(95,38): warning C4090: 'function': different 'const' qualifiers
   main.c
+C:\Users\Default\Documents\C\StudentsManagement\main.h(46,1): warning C4005: 'HELP_SAVE': macro redefinition
+C:\Users\Default\Documents\C\StudentsManagement\main.h(43): message : see previous definition of 'HELP_SAVE'
+  server.c
+C:\Users\Default\Documents\C\StudentsManagement\main.h(46,1): warning C4005: 'HELP_SAVE': macro redefinition
+C:\Users\Default\Documents\C\StudentsManagement\main.h(43): message : see previous definition of 'HELP_SAVE'
+C:\Users\Default\Documents\C\StudentsManagement\server.c(32,24): warning C4090: 'function': different 'const' qualifiers
   Generating Code...
+C:\Users\Default\Documents\C\StudentsManagement\server.c(124): warning C4716: 'select_studnets': must return a value
   StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe
