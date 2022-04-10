@@ -8,6 +8,11 @@
 #define NAME 64
 #define REQUEST 7
 #define REQUEST_TYPES 7
+#define DETAILS_TYPES 7
+#define OPERATOR_TYPES 6
+
+#define OPERATOR_BREAK "=<>!"
+#define SPACE_BREAK " \n\0\t,"
 #define IN_FILE "DB_studs.csv"
 
 #define FORM_HEADERS "|    first name    |    second name    |  C lang   | Comp Nets | CS Funds  |  Average  |\n"
@@ -47,15 +52,16 @@
 #define HELP_QUIT "For completing the server run and exiting the program (includes the option to save changes).\n"
 
 
-enum Courses { c_lang, comp_net, cs_f };
+enum Details { first_name, last_name, id, c_lang, comp_net, cs_f, average };
 enum Requests { quit, select, set, print, del, save, help };
+enum Operators { eq, not_eq , biger, smaller, big_eq, sml_eq };
 
 typedef struct Student {
 	struct Student* next;
 	long id;
 	char* first_name;
 	char* last_name;
-	float marks_avrage;
+	float marks_average;
 	short marks[COURSES];
 } Student;
 
@@ -67,55 +73,81 @@ typedef struct StudentList {
 	unsigned short add_counter;
 } StudentList;
 
-	// #1 level functions
+// #1 level functions
+
+// read the students data from the file
 StudentList* read_students_data();
+// print all the students in a form
 void print_form(StudentList* student_list);
+// run the server for data requests
 void run_requests_server(StudentList* student_list);
+// free all the students list memory
 void free_students_list(StudentList*);
+// print the error massage and exit with the given code
 void print_error_and_exit(const char* error, const short error_code);
 
-	// #2 level functions
+// #2 level functions
+
 void set_line(StudentList* student_list, const char* first_name
-	,const char* last_name, const long id, const short course_code, const short mark);
+	, const char* last_name, const long id, const short course_code, const short mark);
+// print all the students into the form (used by print_form function)
 void print_all_students(StudentList*);
+// print a single student into the form (used by print_form function)
 void print_student(Student*);
 // print documentation for the requests server
 void get_help(short req);
 // send the request to the appropriate function
 int request_switch(const char* request, StudentList* student_list);
+// free a single student memory
 void free_student(Student* s);
 
-	// tools
-void read_line(char line[LINE], FILE* in_file);
-//void scan_word(char *word);
-int is_number(const char* txt);
-int names_cmp(const char* name_a, const char* name_b);
-float get_student_marks_avrage(Student* student);
-int get_cours_code(char* course_name);
-int get_request_code(char* request);
+// tools
 
-	// checks
+// read from the file a single line
+void read_line(char line[LINE], FILE* in_file);
+// check if all the string is digits
+int is_number(const char* txt);
+// compare between tow names (insensitive case)
+int names_cmp(const char* name_a, const char* name_b);
+// calculate average of the student marks
+float get_student_marks_avrage(Student* student);
+// get code from name
+int find_item(char* item, char** arr, int start, int end);
+void strip(const char* txt);
+void jump_to_char(char** from, char to);
+
+// checks
 int check_line(const char** token, const char* line, char* first_name
-	,char* last_name, long* id, short* course_code, short* mark);
+	, char* last_name, long* id, short* course_code, short* mark);
+int check_request(const char** token, const char* line, char* first_name
+	, char* last_name, long* id, short* course_code, short* mark);
 // check if all the chars is 'a-z, A-Z, spaces..' (not digits or special signs)
 int check_name(const char* txt);
-// validate request to server
-int check_request(const char* req);
 int check_id(const long id);
 int check_mark(const short mark);
 
-	// data management
+// data management
+
+// create a new student (update id only)
 Student* create_student(long const id);
+// update all the details of the student
 Student* update_student(Student* student, const char* first_name, const char* last_name, const short course_code, const short mark);
+// update the student first name
 int update_first_name(Student* student, const char* first_name);
+// update the student last name
 int update_last_name(Student* student, const char* last_name);
+// update single mark of the student 
 void update_mark(Student* student, const short course_code, const short mark);
+// get pointer to a student by given id
 Student* find_student(StudentList* list, long const id);
+// add student in the linked list in order
 StudentList* add_student_in_order(StudentList* list, Student* student);
+// delete student from the list by given id
 void delete_student(StudentList*, unsigned long const id);
 
 Student** select_studnets(const char* request, StudentList* student_list);
-void set_studnet(const char* request, StudentList* student_list);
+void set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const short course_code, const short mark);
+int set_request(const char* request, StudentList* student_list);
 void delete_studnets(const char* request, StudentList* student_list);
 void save_changes(StudentList* student_list);
 void quit_server(StudentList* student_list);

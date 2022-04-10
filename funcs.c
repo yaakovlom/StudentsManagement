@@ -1,7 +1,6 @@
 #include "main.h"
 
-static char* courses_names[] = { [c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals" };
-static char* details[] = { "first name", "last name", "id", "course name", "mark" };
+static char* detail_names[] = { [first_name] = "first name",[last_name] = "last name",[id] = "id",[c_lang] = "C language",[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals",[average] = "average" };
 
 StudentList* read_students_data()
 {
@@ -10,7 +9,7 @@ StudentList* read_students_data()
 	int line_number = 0;
 	long id;
 	short course_code, mark, details_result;
-	char line[LINE], first_name[NAME], last_name[NAME], *token = NULL;
+	char line[LINE], first_name[NAME], last_name[NAME], * token = NULL;
 
 	if (student_list)
 	{
@@ -26,10 +25,10 @@ StudentList* read_students_data()
 				// check & set all the student details
 				if ((details_result = check_line(&token, line, first_name, last_name, &id, &course_code, &mark)) < 5)
 				{
-					printf("Line %d in %s - %s: invalid detail\n", line_number, details[details_result], token);
+					printf("Line %d in %s - %s: invalid detail\n", line_number, detail_names[details_result], token);
 					continue;
 				}
-				set_line(student_list, first_name, last_name, id, course_code, mark);
+				set_student(student_list, first_name, last_name, id, course_code, mark);
 
 			} while (!feof(in_file));
 			fclose(in_file);
@@ -58,11 +57,18 @@ void read_line(char line[LINE], FILE* stream)
 	else while ((ch = fgetc(stream)) != '\n' && ch != EOF);
 }
 
-int get_cours_code(char* course_name)
+void strip(const char** txt)
 {
-	while (isspace(*course_name)) course_name++;
-	for (int i = 0; i < COURSES; i++)
-		if (course_name && !strcmp(course_name, courses_names[i]))
+	char* end_of_txt = (*txt) + strlen(*txt);
+	while (*txt && isspace(**txt)) if (*txt) (*txt)++;
+	while (--end_of_txt && isspace(*(end_of_txt))) *end_of_txt = '\0';
+}
+
+int find_item(char* item, char** arr, int start, int end)
+{
+	strip(&item);
+	for (int i = start; i < end; i++)
+		if (item && !strcmp(item, arr[i]))
 			return i;
 	return -1;
 }
@@ -92,7 +98,7 @@ int check_line(const char** token, const char* line, char* first_name,
 	*token = strtok(NULL, ",");
 
 	// check the course name
-	*course_code = get_cours_code(*token);
+	*course_code = find_item(*token, detail_names, c_lang, cs_f + 1) - c_lang;
 	if (*course_code == -1)
 		return 3;
 	*token = strtok(NULL, ",");
@@ -125,15 +131,15 @@ int check_mark(const short mark)
 	return (mark >= 0 && mark < 150);
 }
 
-void set_line(StudentList *student_list, const char *first_name,
-	const char *last_name, const long id, const short course_code, const short mark)
+void set_student(StudentList* student_list, const char* first_name,
+	const char* last_name, const long id, const short course_code, const short mark)
 {
 	Student* student;
 
 	// try to find and update this student
 	student = find_student(student_list, id);
 	if (student)
-		update_mark(student, course_code, mark);
+		update_student(student, first_name, last_name, course_code, mark);
 	// create a new student and add to the student_list
 	else
 	{
@@ -143,7 +149,7 @@ void set_line(StudentList *student_list, const char *first_name,
 	}
 }
 
-float get_student_marks_avrage(Student* student)
+float get_student_marks_average(Student* student)
 {
 	float courses = 0, sum = 0;
 	for (int i = 0; i < COURSES; i++)
@@ -284,7 +290,7 @@ int update_last_name(Student* student, const char* last_name)
 void update_mark(Student* student, const short course_code, const short mark)
 {
 	student->marks[course_code] = mark;
-	student->marks_avrage = get_student_marks_avrage(student);
+	student->marks_average = get_student_marks_average(student);
 }
 
 void print_form(StudentList* student_list)
@@ -299,10 +305,11 @@ void print_form(StudentList* student_list)
 
 void print_all_students(StudentList* student_list)
 {
-	while (student_list->head)
+	Student* cursor = student_list->head;
+	while (cursor)
 	{
-		print_student(student_list->head);
-		student_list->head = student_list->head->next;
+		print_student(cursor);
+		cursor = cursor->next;
 	}
 }
 
@@ -314,7 +321,7 @@ void print_student(Student* s)
 			printf("  %-8d |", s->marks[i]);
 		else
 			printf("  -        |");
-	printf("  %-8.1f | \n", s->marks_avrage);
+	printf("  %-8.1f | \n", s->marks_average);
 }
 
 void free_student(Student* s)
@@ -331,12 +338,14 @@ void free_student(Student* s)
 
 void free_students_list(StudentList* student_list)
 {
-	if (student_list)
+	if (student_list && student_list->head)
 	{
+		Student* cursor;
 		while (student_list->head)
 		{
-			free_student(student_list->head);
+			cursor = student_list->head;
 			student_list->head = student_list->head->next;
+			free_student(cursor);
 		}
 		free(student_list);
 	}

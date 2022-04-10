@@ -1,5 +1,8 @@
-get lines +
-check & create linked list of students +
-sort students
-print students
-start server
+print error in set request
+in help print valid details
+add state request
+
+humming distance
+trie tree
+
+set first name=test, last name=me, id = 123456789, C language = 90
