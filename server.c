@@ -1,8 +1,8 @@
 #include "main.h"
 
-static char* request_names[] = { [quit] = "quit",[select] = "select",[set] = "set",[print] = "print",[del] = "del",[save] = "save",[help] = "help" };
+static char* request_names[] = { [quit] = "quit",[select] = "select",[set] = "set",[print] = "print",[del] = "del",[save] = "save",[help] = "help", [state] = "state"};
 
-static char* detail_names[] = { [first_name] = "first name",[last_name] = "last name",[id] = "id",[c_lang] = "C language"\
+static char* detail_names[] = { [first_name] = "first name",[last_name] = "last name",[id] = "id",[c_lang] = "C language"
 	,[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals",[average] = "average" };
 
 static char* operator_names[] = { [eq] = "==" ,[not_eq ] = "!=" ,[biger] = ">",[smaller] = "<",[big_eq] = ">=",[sml_eq] = "<=" };
@@ -15,7 +15,15 @@ void run_requests_server(StudentList* student_list)
 	do {
 		printf("~>");
 		read_line(request, stdin);
-		not_finish = request_switch(request, student_list);
+		if (!is_ascii(request))
+		{
+			printf("Invalid input.. (ASCII chars only)\n");
+			not_finish = 1;
+		}
+		else if (strlen(request))
+			not_finish = request_switch(request, student_list);
+		else 
+			not_finish = 1;
 	} while (not_finish);
 }
 
@@ -38,7 +46,7 @@ int request_switch(const char* request, StudentList* student_list)
 	{
 	case quit:
 	{
-		//quit_server(student_list);
+		//save_changes(student_list);
 		break;
 	}
 	case select:
@@ -80,6 +88,11 @@ int request_switch(const char* request, StudentList* student_list)
 			get_help(get_request_code(request));
 		else
 			get_help(-1);
+		break;
+	}
+	case state:
+	{
+		print_state(student_list);
 		break;
 	}
 	default:
@@ -145,9 +158,9 @@ Student** select_studnets(const char* request, StudentList* student_list)
 
 int set_request(const char* request, StudentList* student_list)
 {
-	long id;
-	short course_code, mark, details_result;
-	char line[LINE], first_name[NAME], last_name[NAME], * token = NULL;
+	long id = 0;
+	short course_code = 0, mark = 0, details_result = 0;
+	char line[LINE] = {0}, first_name[NAME] = {0}, last_name[NAME] = {0}, * token = NULL;
 	if (check_request(&token, request, first_name, last_name, &id, &course_code, &mark))
 		set_student(student_list, first_name, last_name, id, course_code, mark);
 	else
@@ -160,62 +173,96 @@ int check_request(const char** token, const char* request, char* f_name, char* l
 {
 	enum Detail detail;
 	long temp;
-	unsigned short counter = 0, res = 1;
+	unsigned short counter = 0, res = 0;
 	char name[NAME];
 
-	token = strtok(request, ",=\0");
-	while (token && res)
+	token = strtok(request, ",=");
+	while (token)
 	{
 		if (!(counter % 2))
+		{
 			detail = find_item(token, detail_names, first_name, average + 1);
+			if (detail == -1)
+				printf("Invalid detail: %s\n", (char*)token);
+		}
 		else
 			switch (detail)
 			{
 			case first_name:
 			{
-				res = res && check_name(token);
-				if (res)
+				if (check_name(token))
 					strcpy(f_name, token);
 				break;
 			}
 			case last_name:
 			{
-				res = res && check_name(token);
-				if (res)
+				if (check_name(token))
 					strcpy(l_name, token);
 				break;
 			}
 			case id:
 			{
 				temp = atoi(token);
-				res = res && check_id(temp);
-				if (res)
+				if (check_id(temp))
+				{
 					*_id = temp;
+					res = 1;
+				}
 				break;
 			}
 			case c_lang: case comp_net: case cs_f:
 			{
 				temp = atoi(token);
-				res = res && check_mark(temp);
-				*course_code = detail - c_lang;
-				*mark = temp;
+				if (check_mark(temp))
+				{
+					*course_code = detail - c_lang;
+					*mark = temp;
+				}
 				break;
 			}
-			default:
-				res = 0;
 			}
-		token = strtok(NULL, ",=\0");
+		token = strtok(NULL, ",=");
 		counter++;
 	}
 	return res;
 }
 
-void delete_studnets(const char* request, StudentList* student_list)
-{
-
-}
+//void delete_studnets(const char* request, StudentList* student_list)
+//{
+//
+//}
 
 void save_changes(StudentList* student_list)
 {
+	FILE* out_file;
+	if ((out_file = fopen(DB_FILE, "w")))
+	{
+		Student* cursor = student_list->head;
+		while (cursor)
+		{
+			save_student(cursor, out_file);
+			cursor = cursor->next;
+		}
+		return NULL;
+		fclose(out_file);
+		student_list->add_counter = 0;
+		student_list->update_counter = 0;
+		student_list->delete_counter = 0;
+	}
+	else
+		printf("Cannot open input file\n");
+}
 
+void print_state(StudentList* sl)
+{
+	printf("added: %d, updated = %d, deleted: %d\n", sl->add_counter, sl->update_counter, sl->delete_counter);
+}
+
+void save_student(Student* s, FILE* out_file)
+{
+	for (enum Details course = c_lang; course < c_lang + COURSES; course++)
+	{
+		if (s->marks[course - c_lang] != -1)
+			fprintf(out_file, "%s,%s,%ld,%s,%d\n", s->first_name, s->last_name, s->id, detail_names[course], s->marks[course - c_lang]);
+	}
 }

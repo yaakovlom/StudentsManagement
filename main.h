@@ -7,16 +7,16 @@
 #define LINE 180
 #define NAME 64
 #define REQUEST 7
-#define REQUEST_TYPES 7
+#define REQUEST_TYPES 8
 #define DETAILS_TYPES 7
 #define OPERATOR_TYPES 6
 
 #define OPERATOR_BREAK "=<>!"
 #define SPACE_BREAK " \n\0\t,"
-#define IN_FILE "DB_studs.csv"
+#define DB_FILE "DB_studs.csv"
 
-#define FORM_HEADERS "|    first name    |    second name    |  C lang   | Comp Nets | CS Funds  |  Average  |\n"
-#define SPLIT_LINE   "+------------------+-------------------+-----------+-----------+-----------+-----------+\n"
+#define FORM_HEADERS "|   #   |    first name    |    second name    |  C lang   | Comp Nets | CS Funds  |  Average  |\n"
+#define SPLIT_LINE   "+-------+------------------+-------------------+-----------+-----------+-----------+-----------+\n"
 #define HELP_MAIN \
 "Enter one of the following requests:\n\
  - print:\n\
@@ -53,7 +53,7 @@
 
 
 enum Details { first_name, last_name, id, c_lang, comp_net, cs_f, average };
-enum Requests { quit, select, set, print, del, save, help };
+enum Requests { quit, select, set, print, del, state, save, help };
 enum Operators { eq, not_eq , biger, smaller, big_eq, sml_eq };
 
 typedef struct Student {
@@ -93,7 +93,7 @@ void set_line(StudentList* student_list, const char* first_name
 // print all the students into the form (used by print_form function)
 void print_all_students(StudentList*);
 // print a single student into the form (used by print_form function)
-void print_student(Student*);
+void print_student(Student* s, unsigned int line);
 // print documentation for the requests server
 void get_help(short req);
 // send the request to the appropriate function
@@ -104,7 +104,7 @@ void free_student(Student* s);
 // tools
 
 // read from the file a single line
-void read_line(char line[LINE], FILE* in_file);
+void read_line(char *line[LINE], FILE* in_file);
 // check if all the string is digits
 int is_number(const char* txt);
 // compare between tow names (insensitive case)
@@ -114,7 +114,6 @@ float get_student_marks_avrage(Student* student);
 // get code from name
 int find_item(char* item, char** arr, int start, int end);
 void strip(const char* txt);
-void jump_to_char(char** from, char to);
 
 // checks
 int check_line(const char** token, const char* line, char* first_name
@@ -125,6 +124,7 @@ int check_request(const char** token, const char* line, char* first_name
 int check_name(const char* txt);
 int check_id(const long id);
 int check_mark(const short mark);
+int is_ascii(const char *txt);
 
 // data management
 
@@ -148,6 +148,9 @@ void delete_student(StudentList*, unsigned long const id);
 Student** select_studnets(const char* request, StudentList* student_list);
 void set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const short course_code, const short mark);
 int set_request(const char* request, StudentList* student_list);
-void delete_studnets(const char* request, StudentList* student_list);
 void save_changes(StudentList* student_list);
-void quit_server(StudentList* student_list);
+void save_student(Student* s, FILE* out_file);
+void print_state(StudentList* sl);
+
+
+//void delete_studnets(const char* request, StudentList* student_list);

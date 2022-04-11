@@ -8,29 +8,34 @@ StudentList* read_students_data()
 	StudentList* student_list = (StudentList*)malloc(sizeof(StudentList));
 	int line_number = 0;
 	long id;
-	short course_code, mark, details_result;
-	char line[LINE], first_name[NAME], last_name[NAME], * token = NULL;
+	short course_code, mark, details_result = 0;
+	char line[LINE] = { 0 }, first_name[NAME] = {0}, last_name[NAME] = {0}, * token = NULL;
 
 	if (student_list)
 	{
 		student_list->head = NULL;
 		student_list->len = 0;
+		student_list->add_counter = 0;
+		student_list->update_counter = 0;
+		student_list->delete_counter = 0;
 
-		if ((in_file = fopen(IN_FILE, "r")))
+		if ((in_file = fopen(DB_FILE, "r")))
 		{
-			do {
+			while (!feof(in_file))
+			{
 				line_number++;
 				read_line(line, in_file);
 
 				// check & set all the student details
-				if ((details_result = check_line(&token, line, first_name, last_name, &id, &course_code, &mark)) < 5)
+				if (!strlen(line) || (details_result = check_line(&token, line, first_name, last_name, &id, &course_code, &mark)) < 5)
 				{
-					printf("Line %d in %s - %s: invalid detail\n", line_number, detail_names[details_result], token);
+					if (strlen(line))
+						printf("Input file line %d in %s - %s: invalid detail\n", line_number, detail_names[details_result], token);
 					continue;
 				}
 				set_student(student_list, first_name, last_name, id, course_code, mark);
 
-			} while (!feof(in_file));
+			}
 			fclose(in_file);
 
 			return student_list;
@@ -52,16 +57,25 @@ StudentList* read_students_data()
 void read_line(char line[LINE], FILE* stream)
 {
 	char ch;
-	fgets(line, LINE, stream);
-	if (line[strlen(line) - 1] == '\n')	line[strlen(line) - 1] = '\0';
-	else while ((ch = fgetc(stream)) != '\n' && ch != EOF);
+	if (fgets(line, LINE, stream))
+		if (line[strlen(line) - 1] == '\n')	line[strlen(line) - 1] = '\0';
+		else while ((ch = fgetc(stream)) != '\n' && ch != EOF);
+	else
+		line[0] = '\0';
 }
 
 void strip(const char** txt)
 {
-	char* end_of_txt = (*txt) + strlen(*txt);
-	while (*txt && isspace(**txt)) if (*txt) (*txt)++;
-	while (--end_of_txt && isspace(*(end_of_txt))) *end_of_txt = '\0';
+	char* end_of_txt;
+	if (*txt)
+	{
+		while (*txt && isspace(**txt)) (*txt)++;
+		if (strlen(*txt))
+		{
+			end_of_txt = (*txt) + strlen(*txt);
+			while (--end_of_txt && isspace(*(end_of_txt))) *end_of_txt = '\0';
+		}
+	}
 }
 
 int find_item(char* item, char** arr, int start, int end)
@@ -76,6 +90,8 @@ int find_item(char* item, char** arr, int start, int end)
 int check_line(const char** token, const char* line, char* first_name,
 	char* last_name, long* id, short* course_code, short* mark)
 {
+	if (!is_ascii(line))
+		return 0;
 	*token = strtok(line, ",");
 	// check the first name
 	if (!check_name(*token))
@@ -113,7 +129,7 @@ int check_line(const char** token, const char* line, char* first_name,
 
 int check_name(const char* txt)
 {
-	if (!strlen(txt))
+	if (!txt || !strlen(txt))
 		return 0;
 	for (int i = 0; i < strlen(txt); i++)
 		if (isdigit(txt[i]) || ispunct(txt[i]))
@@ -129,6 +145,14 @@ int check_id(const long id)
 int check_mark(const short mark)
 {
 	return (mark >= 0 && mark < 150);
+}
+
+int is_ascii(const char* txt)
+{
+	while (*txt)
+		if (*txt < 0 || *(txt++) > 127)
+			return 0;
+	return 1;
 }
 
 void set_student(StudentList* student_list, const char* first_name,
@@ -194,6 +218,7 @@ Student* create_student(const long id)
 		student->last_name = NULL;
 		student->next = NULL;
 		student->marks[0] = student->marks[1] = student->marks[2] = -1;
+		student->marks_average = 0;
 
 		return student;
 	}
@@ -261,6 +286,7 @@ Student* update_student(Student* student, const char* first_name, const char* la
 
 int update_first_name(Student* student, const char* first_name)
 {
+	strip(&first_name);
 	// try to relocate memory space for student first name
 	char* temp = (char*)realloc(student->first_name, strlen(first_name) + 1);
 	if (temp)
@@ -275,6 +301,7 @@ int update_first_name(Student* student, const char* first_name)
 
 int update_last_name(Student* student, const char* last_name)
 {
+	strip(&last_name);
 	// try to relocate memory space for student last name
 	char* temp = (char*)realloc(student->last_name, strlen(last_name) + 1);
 	if (temp)
@@ -306,16 +333,18 @@ void print_form(StudentList* student_list)
 void print_all_students(StudentList* student_list)
 {
 	Student* cursor = student_list->head;
+	unsigned int line = 1;
 	while (cursor)
 	{
-		print_student(cursor);
+		print_student(cursor, line);
 		cursor = cursor->next;
+		line++;
 	}
 }
 
-void print_student(Student* s)
+void print_student(Student* s, unsigned int line)
 {
-	printf("| %-16s | %-17s |", s->first_name, s->last_name);
+	printf("| %-5d | %-16s | %-17s |", line, s->first_name, s->last_name);
 	for (int i = 0; i < COURSES; i++)
 		if (s->marks[i] != -1)
 			printf("  %-8d |", s->marks[i]);
