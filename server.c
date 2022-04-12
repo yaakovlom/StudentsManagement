@@ -131,6 +131,11 @@ void get_help(enum Requests req)
 		printf(HELP_DEL);
 		break;
 	}
+	case state:
+	{
+		printf(HELP_STATE);
+		break;
+	}
 	case save:
 	{
 		printf(HELP_SAVE);
@@ -145,12 +150,12 @@ Student** select_studnets(const char* request, StudentList* student_list)
 {
 	enum Details detail_code;
 	enum Operators operater_code;
-	request = strtok(request, OPERATOR_BREAK);
+	char* token;
+	token = strtok(request, );
 	detail_code = find_item(request, detail_names, first_name, average + 1);
 
-	request += strlen(request);
-	request = strtok(NULL, "\n\0");
-	operater_code = find_item(request, operator_names, eq, sml_eq + 1);
+	token = strtok(NULL, " \n\0");
+	operater_code = find_item(token, operator_names, eq, sml_eq + 1);
 
 	printf("%d %d\n", detail_code, operater_code);
 	return NULL;
@@ -227,10 +232,10 @@ int check_request(const char** token, const char* request, char* f_name, char* l
 	return res;
 }
 
-//void delete_studnets(const char* request, StudentList* student_list)
-//{
-//
-//}
+void delete_studnets(const char* request, StudentList* student_list)
+{
+
+}
 
 void save_changes(StudentList* student_list)
 {

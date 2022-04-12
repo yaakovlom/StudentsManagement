@@ -11,8 +11,6 @@
 #define DETAILS_TYPES 7
 #define OPERATOR_TYPES 6
 
-#define OPERATOR_BREAK "=<>!"
-#define SPACE_BREAK " \n\0\t,"
 #define DB_FILE "DB_studs.csv"
 
 #define FORM_HEADERS "|   #   |    first name    |    second name    |  C lang   | Comp Nets | CS Funds  |  Average  |\n"
@@ -49,6 +47,7 @@
 #define HELP_DEL "For deleting all data of students that meet the attached condition\
  A selection request is submitted in the following format: 'del <Data Type> <Operator> <Value>' (For example - 'del id==300004530).\n"
 #define HELP_SAVE "For help and requirements for the various requests (For example - 'help' or 'help select').\n"
+#define HELP_STATE "For printing the state of the changes (add, update and delete) from the last 'save' request.\n"
 #define HELP_QUIT "For completing the server run and exiting the program (includes the option to save changes).\n"
 
 
@@ -148,9 +147,7 @@ void delete_student(StudentList*, unsigned long const id);
 Student** select_studnets(const char* request, StudentList* student_list);
 void set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const short course_code, const short mark);
 int set_request(const char* request, StudentList* student_list);
+void delete_studnets(Student* student, StudentList* student_list);
 void save_changes(StudentList* student_list);
 void save_student(Student* s, FILE* out_file);
 void print_state(StudentList* sl);
-
-
-//void delete_studnets(const char* request, StudentList* student_list);
