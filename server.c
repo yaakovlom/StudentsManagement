@@ -5,12 +5,12 @@ static char* request_names[] = { [quit] = "quit",[select] = "select",[set] = "se
 static char* detail_names[] = { [first_name] = "first name",[last_name] = "last name",[id] = "id",[c_lang] = "C language"
 	,[comp_net] = "Computer Networks",[cs_f] = "CS Fundamentals",[average] = "average" };
 
-static char* operator_names[] = { [eq] = "==" ,[not_eq ] = "!=" ,[biger] = ">",[smaller] = "<",[big_eq] = ">=",[sml_eq] = "<=" };
+static char* operator_names[] = { [big_eq] = ">=", [bigger] = ">" ,[sml_eq] = "<=", [smaller] = "<", [not_eq ] = "!=" ,[eq] = "=" };
 
 void run_requests_server(StudentList* student_list)
 {
-	char request[LINE];
-	short not_finish;
+	char request[LINE] = {0};
+	short not_finish = 1;
 	printf("Welcome to the Student Management Server!! for help enter 'help':\n");
 	do {
 		printf("~>");
@@ -38,65 +38,69 @@ int get_request_code(char* request)
 
 int request_switch(const char* request, StudentList* student_list)
 {
-	enum Requests request_type;
+	enum Requests request_type = -1;
 	int temp, res;
-	request = strtok(request, SPACE_BREAK);
-	request_type = get_request_code(request);
-	switch (request_type)
+	char token[REQUEST] = {0};
+	if (sscanf(request, " %s", token))
 	{
-	case quit:
-	{
-		//save_changes(student_list);
-		break;
-	}
-	case select:
-	{
-		request = strtok(NULL, "\n\0");
-		select_studnets(request, student_list);
-		break;
-	}
-	case set:
-	{
-		temp = student_list->len;
-		request = strtok(NULL, "\n\0");
-		res = set_request(request, student_list);
-		if (student_list->len > temp && res)
-			student_list->add_counter++;
-		else if (res)
-			student_list->update_counter++;
-		break;
-	}
-	case print:
-	{
-		print_form(student_list);
-		break;
-	}
-	case del:
-	{
-		delete_studnets(request, student_list);
-		break;
-	}
-	case save:
-	{
-		save_changes(student_list);
-		break;
-	}
-	case help:
-	{
-		request = strtok(NULL, SPACE_BREAK);
-		if (request)
-			get_help(get_request_code(request));
-		else
-			get_help(-1);
-		break;
-	}
-	case state:
-	{
-		print_state(student_list);
-		break;
-	}
-	default:
-		printf("Invalid request type.. for help type 'help'.\n");
+		request += strlen(token);
+		request_type = get_request_code(token);
+		switch (request_type)
+		{
+		case quit:
+		{
+			//save_changes(student_list);
+			break;
+		}
+		case select:
+		{
+			enum Details detail_code;
+			enum Operators operater_code;
+			void* value;
+			check_selection(request, &detail_code, &operater_code, &value);
+			break;
+		}
+		case set:
+		{
+			temp = student_list->len;
+			res = set_request(request, student_list);
+			if (student_list->len > temp && res)
+				student_list->add_counter++;
+			else if (res)
+				student_list->update_counter++;
+			break;
+		}
+		case print:
+		{
+			print_form(student_list);
+			break;
+		}
+		case del:
+		{
+			delete_studnets(request, student_list);
+			break;
+		}
+		case save:
+		{
+			save_changes(student_list);
+			break;
+		}
+		case help:
+		{
+			if (*request)
+				get_help(get_request_code(request));
+			else
+				get_help(-1);
+			break;
+		}
+		case state:
+		{
+			print_state(student_list);
+			break;
+		}
+		default:
+			printf("Invalid request type.. for help type 'help'.\n");
+		}
 	}
 
 	return request_type;
@@ -146,19 +150,79 @@ void get_help(enum Requests req)
 	}
 }
 
-Student** select_studnets(const char* request, StudentList* student_list)
+int check_selection(const char* request, enum Details *detail_code, enum Operators *operater_code, void **value)
 {
-	enum Details detail_code;
-	enum Operators operater_code;
-	char* token;
-	token = strtok(request, );
-	detail_code = find_item(request, detail_names, first_name, average + 1);
+	char name[NAME];
+	short mark;
+	long _id;
+	float _average;
+	*operater_code = find_operator(request);
+	if (*operater_code)
+	{
+		char* token = strtok(request, "<>!=");
+		*detail_code = find_item(token, detail_names, first_name, average + 1);
 
-	token = strtok(NULL, " \n\0");
-	operater_code = find_item(token, operator_names, eq, sml_eq + 1);
+		token = strtok(NULL, "<>!=");
+		if (!strlen(token)) // if the operator has tow chars
+			token = strtok(NULL, "<>!=");
 
-	printf("%d %d\n", detail_code, operater_code);
-	return NULL;
+		if (*detail_code)
+		{
+			switch (*detail_code)
+			{
+			case first_name: case last_name:
+			{
+				if (check_name(token))
+				{
+					strcpy(name, token);
+					*value = name;
+					return 1;
+				}
+				break;
+			}
+			case id:
+			{
+				if (sscanf(token, " %ld", &_id) && check_id(_id))
+				{
+					*value = _id;
+					return 1;
+				}
+				break;
+			}
+			case c_lang: case comp_net: case cs_f:
+			{
+				if (sscanf(token, " %hd", &mark) && check_mark(mark))
+				{
+					*value = &mark;
+					return 1;
+				}
+			}
+				break;
+			case average:
+			{
+				if (sscanf(token, " %f", &_average) && check_mark(_average))
+				{
+					*value = &_average;
+					return 1;
+				}
+			}
+			}
+		}
+		else
+			printf("Invalid detail..\n");
+	}
+	else
+		printf("Invalid operator..\n");
+
+	return 0;
+}
+
+int find_operator(const char* request)
+{
+	for (enum Operators i = big_eq; i <= eq; i++)
+		if (strstr(request, operator_names[i]))
+			return  i;
+	return 0;
 }
 
 int set_request(const char* request, StudentList* student_list)
@@ -166,7 +230,7 @@ int set_request(const char* request, StudentList* student_list)
 	long id = 0;
 	short course_code = 0, mark = 0, details_result = 0;
 	char line[LINE] = {0}, first_name[NAME] = {0}, last_name[NAME] = {0}, * token = NULL;
-	if (check_request(&token, request, first_name, last_name, &id, &course_code, &mark))
+	if (check_set_request(&token, request, first_name, last_name, &id, &course_code, &mark))
 		set_student(student_list, first_name, last_name, id, course_code, mark);
 	else
 		return 0;
@@ -174,12 +238,11 @@ int set_request(const char* request, StudentList* student_list)
 	return set;
 }
 
-int check_request(const char** token, const char* request, char* f_name, char* l_name, long* _id, short* course_code, short* mark)
+int check_set_request(const char** token, const char* request, char* f_name, char* l_name, long* _id, short* course_code, short* mark)
 {
 	enum Detail detail;
 	long temp;
 	unsigned short counter = 0, res = 0;
-	char name[NAME];
 
 	token = strtok(request, ",=");
 	while (token)

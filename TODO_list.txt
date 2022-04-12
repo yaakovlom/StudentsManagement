@@ -1,6 +1,6 @@
-print error in set request
 in help print valid details
-add state request
+fix update state
+start enum with 1
 
 humming distance
 trie tree

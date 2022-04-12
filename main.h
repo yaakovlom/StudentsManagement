@@ -7,6 +7,8 @@
 #define LINE 180
 #define NAME 64
 #define REQUEST 7
+#define DETAIL 18
+#define ID 10
 #define REQUEST_TYPES 8
 #define DETAILS_TYPES 7
 #define OPERATOR_TYPES 6
@@ -33,6 +35,7 @@
           For help and requirements for the various requests (For example - 'help select').\n\
  - quit:\n\
           For completing the server run and exiting the program.\n"
+
 #define HELP_PRINT "For printing all student data.\n"
 #define HELP_SELECT \
 "For selecting students that meet the attached condition.\
@@ -51,9 +54,9 @@
 #define HELP_QUIT "For completing the server run and exiting the program (includes the option to save changes).\n"
 
 
-enum Details { first_name, last_name, id, c_lang, comp_net, cs_f, average };
+enum Details { first_name = 1, last_name, id, c_lang, comp_net, cs_f, average };
 enum Requests { quit, select, set, print, del, state, save, help };
-enum Operators { eq, not_eq , biger, smaller, big_eq, sml_eq };
+enum Operators { big_eq = 1, bigger, sml_eq, smaller, not_eq , eq };
 
 typedef struct Student {
 	struct Student* next;
@@ -117,7 +120,8 @@ void strip(const char* txt);
 // checks
 int check_line(const char** token, const char* line, char* first_name
 	, char* last_name, long* id, short* course_code, short* mark);
-int check_request(const char** token, const char* line, char* first_name
+int check_selection(const char* request, enum Details* detail_code, enum Operators* operater_code, void** value);
+int check_set_request(const char** token, const char* line, char* first_name
 	, char* last_name, long* id, short* course_code, short* mark);
 // check if all the chars is 'a-z, A-Z, spaces..' (not digits or special signs)
 int check_name(const char* txt);

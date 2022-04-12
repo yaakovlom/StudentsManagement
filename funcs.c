@@ -108,8 +108,7 @@ int check_line(const char** token, const char* line, char* first_name,
 	*token = strtok(NULL, ",");
 
 	// check the id
-	*id = atoi(*token);
-	if (!is_number(*token) || !check_id(*id))
+	if (!sscanf(*token, " %ld", id) || !check_id(*id))
 		return 2;
 	*token = strtok(NULL, ",");
 
@@ -120,8 +119,7 @@ int check_line(const char** token, const char* line, char* first_name,
 	*token = strtok(NULL, ",");
 
 	// check the course mark
-	*mark = atoi(*token);
-	if (!is_number(*token) || !check_mark(*mark))
+	if (!sscanf(*token, " %hd", mark) || !check_mark(*mark))
 		return 4;
 
 	return 5;
@@ -131,8 +129,8 @@ int check_name(const char* txt)
 {
 	if (!txt || !strlen(txt))
 		return 0;
-	for (int i = 0; i < strlen(txt); i++)
-		if (isdigit(txt[i]) || ispunct(txt[i]))
+	while (*txt)
+		if (isdigit(*(txt++)) || ispunct(*txt))
 			return 0;
 	return 1;
 }
@@ -151,6 +149,18 @@ int is_ascii(const char* txt)
 {
 	while (*txt)
 		if (*txt < 0 || *(txt++) > 127)
+			return 0;
+	return 1;
+}
+
+int is_number(const char* txt)
+{
+	if (!txt || !strlen(txt))
+		return 0;
+
+	strip(txt);
+	while (*txt)
+		if (!isdigit(*(txt++)))
 			return 0;
 	return 1;
 }
@@ -183,16 +193,6 @@ float get_student_marks_average(Student* student)
 			sum += student->marks[i];
 		}
 	return sum / courses;
-}
-
-int is_number(const char* txt)
-{
-	if (!strlen(txt))
-		return 0;
-	for (int i = 0; i < strlen(txt); i++)
-		if (!isdigit(txt[i]) || isspace(txt[i]))
-			return 0;
-	return 1;
 }
 
 int names_cmp(const char* name_a, const char* name_b)
