@@ -18,10 +18,13 @@
     <ClCompile Include="main.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="funcs.c">
+    <ClCompile Include="core.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="server.c">
+    <ClCompile Include="queries.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="validation.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,7 +39,13 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
+    <ClInclude Include="core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="queries.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="validation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

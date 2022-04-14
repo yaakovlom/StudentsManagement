@@ -1,7 +1,3 @@
-in help print valid details
-fix update state
-start enum with 1
-
 humming distance
 trie tree
 

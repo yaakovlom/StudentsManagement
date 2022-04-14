@@ -139,9 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="funcs.c" />
+    <ClCompile Include="core.c" />
     <ClCompile Include="main.c" />
-    <ClCompile Include="server.c" />
+    <ClCompile Include="queries.c" />
+    <ClCompile Include="validation.c" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="TODO_list.txt" />
@@ -150,7 +151,9 @@
     <None Include="DB_studs.csv" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h" />
+    <ClInclude Include="core.h" />
+    <ClInclude Include="queries.h" />
+    <ClInclude Include="validation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
