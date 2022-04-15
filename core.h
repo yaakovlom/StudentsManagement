@@ -85,7 +85,7 @@ void free_student(Student* s);
 
 
 // read a single line from the file
-void read_line(char *line[MAX_LEN_LINE], FILE* in_file);
+void read_line(char line[MAX_LEN_LINE], FILE* in_file);
 
 // calculate average of the student marks
 float get_student_marks_avrage(Student* student);
@@ -95,7 +95,7 @@ float get_student_marks_avrage(Student* student);
 int find_item(char* item, char** arr, unsigned int len);
 
 // remove the spaces from both sides of the string
-void strip(const char* txt);
+void strip(char* txt[]);
 
 // print head of a form
 void print_head_form();

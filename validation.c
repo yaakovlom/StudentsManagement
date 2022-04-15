@@ -6,51 +6,63 @@ static char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[
 int check_line(const char** token, const char* line, char* first_name,
 	char* last_name, long* _id, short* course_code, short* mark)
 {
+	short count = 0;
+
 	if (!is_ascii(line))
-		return 0;
+		return count;
 	*token = strtok(line, ",");
+
 	// check the first name
+	strip(token);
 	if (!check_name(*token))
-		return 0;
+		return count;
 	else
 		strcpy(first_name, *token);
 	*token = strtok(NULL, ",");
+	count++;
 
 	// check the last name
+	strip(token);
 	if (!check_name(*token))
-		return 1;
+		return count;
 	else
 		strcpy(last_name, *token);
+	count++;
 	*token = strtok(NULL, ",");
 
 	// check the id
 	if (!sscanf(*token, " %ld", _id) || !check_id(*_id))
-		return 2;
+		return count;
 	*token = strtok(NULL, ",");
+	count++;
 
 	// check the course name
+	strip(token);
 	*course_code = find_item(*token, detail_names + id, COURSES_LEN);
 	if (!(*course_code)--)
-		return 3;
+		return count;
 	*token = strtok(NULL, ",");
+	count++;
 
 	// check the course mark
 	if (!sscanf(*token, " %hd", mark) || !check_mark(*mark))
-		return 4;
+		return count;
 
-	return 5;
+	return ++count;
 }
 
 int check_select_query(const char* query, enum Details* detail_code, enum Operators* operater_code, void** value)
 {
 	char name[MAX_LEN_NAME];
-	short mark;
+	short mark, res = 0;
 	long _id;
 	float _average;
+	char* token;
 	*operater_code = find_operator(query);
 	if (*operater_code)
 	{
-		char* token = strtok(query, "<>!=");
+		token = strtok(query, "<>!=");
+		strip(&token);
 		*detail_code = find_item(token, detail_names, LEN_DETAILS_TYPES);
 
 		token = strtok(NULL, "<>!=");
@@ -65,9 +77,10 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 			{
 				if (check_name(token))
 				{
+					strip(&token);
 					strcpy(name, token);
-					*value = name;
-					return 1;
+					*value = &name;
+					return ++res;
 				}
 				else
 				{
@@ -79,8 +92,8 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 			{
 				if (sscanf(token, " %ld", &_id) && check_id(_id))
 				{
-					*value = _id;
-					return 1;
+					*value = &_id;
+					return ++res;
 				}
 				else
 				{
@@ -93,7 +106,7 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 				if (sscanf(token, " %hd", &mark) && check_mark(mark))
 				{
 					*value = &mark;
-					return 1;
+					return ++res;
 				}
 				else
 				{
@@ -103,10 +116,10 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 			break;
 			case avrg:
 			{
-				if (sscanf(token, " %f", &_average) && check_mark(_average))
+				if (sscanf(token, " %f", &_average) && check_mark((short)_average))
 				{
 					*value = &_average;
-					return 1;
+					return ++res;
 				}
 				else
 				{
@@ -122,21 +135,24 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 	else
 		printf("Invalid operator..\n");
 
-	return 0;
+	return res;
 }
 
-int check_set_query(const char** token, const char* query, char* first_name, char* last_name,
+int check_set_query(const char* query, char* first_name, char* last_name,
 	long* _id, short* course_code, short* mark)
 {
 	enum Detail detail;
-	long temp;
+	long temp_id;
+	short temp_mark;
 	unsigned short counter = 0, res = 0;
+	char* token;
 
 	token = strtok(query, ",=");
 	while (token)
 	{
 		if (!(counter % 2))
 		{
+			strip(&token);
 			detail = find_item(token, detail_names, LEN_DETAILS_TYPES);
 			if (!detail)
 				printf("Invalid detail: %s\n", (char*)token);
@@ -162,10 +178,9 @@ int check_set_query(const char** token, const char* query, char* first_name, cha
 			}
 			case id:
 			{
-				temp = atoi(token);
-				if (check_id(temp))
+				if (sscanf(token, " %ld", &temp_id) && check_id(temp_id))
 				{
-					*_id = temp;
+					*_id = temp_id;
 					res = 1;
 				}
 				else
@@ -174,11 +189,10 @@ int check_set_query(const char** token, const char* query, char* first_name, cha
 			}
 			case c_lng: case cmp_nt: case cs_f:
 			{
-				temp = atoi(token);
-				if (check_mark(temp))
+				if (sscanf(token, " %hd", &temp_mark) && check_mark(temp_mark))
 				{
 					*course_code = detail - c_lng;
-					*mark = temp;
+					*mark = temp_mark;
 				}
 				else
 					printf("Invalid detail: %s\n", (char*)token);
@@ -215,18 +229,6 @@ int is_ascii(const char* txt)
 {
 	while (*txt)
 		if (*txt < 0 || *(txt++) > 127)
-			return 0;
-	return 1;
-}
-
-int is_number(const char* txt)
-{
-	if (!txt || !strlen(txt))
-		return 0;
-
-	strip(txt);
-	while (*txt)
-		if (!isdigit(*(txt++)))
 			return 0;
 	return 1;
 }

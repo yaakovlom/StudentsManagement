@@ -29,10 +29,10 @@ void run_queries_loop(StudentList* student_list)
 	} while (q_type != quit);
 }
 
-int query_switch(const char* query, StudentList* student_list)
+int query_switch(char* query, StudentList* student_list)
 {
 	enum Queries q_type = 0;
-	int temp, res;
+	unsigned int temp, res;
 	char token[QUERY_LEN] = {0};
 	if (sscanf(query, " %s", token))
 	{
@@ -79,6 +79,7 @@ int query_switch(const char* query, StudentList* student_list)
 		{
 			if (*query)
 			{
+				strip(&query);
 				help_query(find_item(query, query_names, LEN_QUERIES_TYPES));
 			}
 			else
@@ -142,11 +143,11 @@ void help_query(enum Queries req)
 	}
 }
 
-void select_query(const char* query, StudentList* student_list)
+void select_query(StudentList* student_list, const char* query)
 {
-	enum Details detail_code;
-	enum Operators operater_code;
-	void* value;
+	enum Details detail_code = 0;
+	enum Operators operater_code = 0;
+	void* value = NULL;
 	if (check_select_query(query, &detail_code, &operater_code, &value))
 		print_selection(student_list, detail_code, operater_code, value);
 }
@@ -163,13 +164,12 @@ int set_query(const char* query, StudentList* student_list)
 {
 	long id = 0;
 	short course_code = 0, mark = 0, details_result = 0;
-	char line[MAX_LEN_LINE] = {0}, first_name[MAX_LEN_NAME] = {0}, last_name[MAX_LEN_NAME] = {0}, * token = NULL;
-	if (check_set_query(&token, query, first_name, last_name, &id, &course_code, &mark))
+	char line[MAX_LEN_LINE] = {0}, first_name[MAX_LEN_NAME] = {0}, last_name[MAX_LEN_NAME] = {0};
+	if (check_set_query(query, first_name, last_name, &id, &course_code, &mark))
 		set_student(student_list, first_name, last_name, id, course_code, mark);
 	else
 		return 0;
-
-	return set;
+	return 1;
 }
 
 void save_changes(StudentList* student_list)
@@ -221,26 +221,31 @@ void print_selection(StudentList* student_list, enum Details detail_code, enum O
 		{
 		case f_name:
 		{
-			result = strcmp(cursor->first_name, (char*)value);
+			result = names_cmp(cursor->first_name, (char*)value);
 			break;
 		}
 		case l_name:
 		{
-			result = strcmp(cursor->last_name, (char*)value);
+			result = names_cmp(cursor->last_name, (char*)value);
 			break;
 		}
 		case id:
 		{
-			result = cursor->id - *(long*)value;
+			result = (short)(cursor->id - *(long*)value);
 			break;
 		}
 		case c_lng:	case cs_f: case cmp_nt:
 		{
-			result = cursor->marks[detail_code - c_lng] - *(short*)value;
+			if (cursor->marks[detail_code - c_lng] == -1)
+			{
+				cursor = cursor->next;
+				continue;
+			}
+			result = (cursor->marks[detail_code - c_lng] - *(short*)value);
 			break;
 		}
 		case avrg:
-			result = cursor->marks_average - *(float*)value;
+			result = (short)(cursor->marks_average - *(float*)value);
 		}
 
 		// check the result by the operator

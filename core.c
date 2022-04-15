@@ -8,8 +8,8 @@ StudentList* read_students_data()
 	FILE* in_file;
 	StudentList* student_list = (StudentList*)malloc(sizeof(StudentList));
 	int line_number = 0;
-	long id;
-	short course_code, mark, details_result = 0;
+	long _id = 0;
+	short course_code = 0, mark = 0, details_result = 0;
 	char line[MAX_LEN_LINE] = { 0 }, first_name[MAX_LEN_NAME] = { 0 }, last_name[MAX_LEN_NAME] = { 0 }, * token = NULL;
 
 	if (student_list)
@@ -28,13 +28,13 @@ StudentList* read_students_data()
 				read_line(line, in_file);
 
 				// check & set all the student details
-				if (!strlen(line) || (details_result = check_line(&token, line, first_name, last_name, &id, &course_code, &mark)) < 5)
+				if (!strlen(line) || (details_result = check_line(&token, line, first_name, last_name, &_id, &course_code, &mark)) < 5)
 				{
 					if (strlen(line))
 						printf("Input file line %d in %s - %s: invalid detail\n", line_number, detail_names[details_result], token);
 					continue;
 				}
-				set_student(student_list, first_name, last_name, id, course_code, mark);
+				set_student(student_list, first_name, last_name, _id, course_code, mark);
 
 			}
 			fclose(in_file);
@@ -65,23 +65,19 @@ void read_line(char line[MAX_LEN_LINE], FILE* stream)
 		line[0] = '\0';
 }
 
-void strip(const char** txt)
+void strip(char* txt[])
 {
 	char* end_of_txt;
-	if (*txt)
+	while (*txt && isspace(**txt)) (*txt)++;
+	if (*txt && strlen(*txt))
 	{
-		while (*txt && isspace(**txt)) (*txt)++;
-		if (strlen(*txt))
-		{
-			end_of_txt = (*txt) + strlen(*txt);
-			while (--end_of_txt && isspace(*(end_of_txt))) *end_of_txt = '\0';
-		}
+		end_of_txt = (*txt) + strlen(*txt);
+		while (--end_of_txt && isspace(*(end_of_txt))) *end_of_txt = '\0';
 	}
 }
 
 int find_item(char* item, char** arr, unsigned int len)
 {
-	strip(&item);
 	for (int i = 1; i < len + 1; i++)
 		if (item && !strcmp(item, arr[i]))
 			return i;
@@ -127,7 +123,8 @@ Student* create_student(const long id)
 	else
 	{
 		student->id = id;
-		student->next = student->last_name = student->first_name = NULL;
+		student->next = NULL;
+		student->last_name = student->first_name = NULL;
 		student->marks[0] = student->marks[1] = student->marks[2] = -1;
 		student->marks_average = 0;
 

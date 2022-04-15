@@ -1,44 +1,7 @@
 ﻿  queries.c
-C:\Users\student\Documents\C language\StudentsManagement\queries.h(50,1): warning C4005: 'HELP_SAVE': macro redefinition
-C:\Users\student\Documents\C language\StudentsManagement\queries.h(47): message : see previous definition of 'HELP_SAVE'
-C:\Users\student\Documents\C language\StudentsManagement\queries.h(84,117): warning C4031: second formal parameter list longer than the first list
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(19,18): warning C4047: 'function': 'char **' differs in levels of indirection from 'char [100]'
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(19,13): warning C4024: 'read_line': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(20,16): warning C4013: 'is_ascii' undefined; assuming extern returning int
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(50,29): warning C4133: 'function': incompatible types - from 'StudentList *' to 'const char *'
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(50,36): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(56,20): warning C4013: 'set_query' undefined; assuming extern returning int
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(57,26): warning C4018: '>': signed/unsigned mismatch
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(82,31): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(150,24): warning C4013: 'check_select_query' undefined; assuming extern returning int
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(167,21): warning C4013: 'check_set_query' undefined; assuming extern returning int
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(234,24): warning C4244: '=': conversion from 'long' to 'short', possible loss of data
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(243,35): warning C4244: '=': conversion from 'float' to 'short', possible loss of data
-  validation.c
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(11,22): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(32,33): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(50,32): warning C4013: 'find_operator' undefined; assuming extern returning int
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(53,29): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(82,18): warning C4047: '=': 'void *' differs in levels of indirection from 'long'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(106,55): warning C4244: 'function': conversion from 'float' to 'const short', possible loss of data
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(135,22): warning C4090: 'function': different 'const' qualifiers
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(135,29): warning C4047: '=': 'const char **' differs in levels of indirection from 'char *'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(140,28): warning C4047: 'function': 'char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(140,23): warning C4024: 'find_item': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(149,25): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(149,20): warning C4024: 'check_name': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(150,30): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(150,25): warning C4024: 'strcpy': different types for formal and actual parameter 2
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(157,25): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(157,20): warning C4024: 'check_name': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(158,29): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(158,24): warning C4024: 'strcpy': different types for formal and actual parameter 2
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(165,22): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(165,17): warning C4024: 'atoi': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(177,22): warning C4047: 'function': 'const char *' differs in levels of indirection from 'const char **'
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(177,17): warning C4024: 'atoi': different types for formal and actual parameter 1
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(178,20): warning C4244: 'function': conversion from 'long' to 'const short', possible loss of data
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(181,14): warning C4244: '=': conversion from 'long' to 'short', possible loss of data
-C:\Users\student\Documents\C language\StudentsManagement\validation.c(188,29): warning C4047: '=': 'const char **' differs in levels of indirection from 'char *'
-  Generating Code...
-  StudentsManagement.vcxproj -> C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe
+C:\Users\Default\Documents\C\StudentsManagement\queries.c(20,16): warning C4013: 'is_ascii' undefined; assuming extern returning int
+C:\Users\Default\Documents\C\StudentsManagement\queries.c(56,20): warning C4013: 'set_query' undefined; assuming extern returning int
+C:\Users\Default\Documents\C\StudentsManagement\queries.c(151,24): warning C4013: 'check_select_query' undefined; assuming extern returning int
+C:\Users\Default\Documents\C\StudentsManagement\queries.c(168,21): warning C4013: 'check_set_query' undefined; assuming extern returning int
+C:\Users\Default\Documents\C\StudentsManagement\queries.c(224,22): warning C4013: 'names_cmp' undefined; assuming extern returning int
+  StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe

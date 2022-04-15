@@ -47,7 +47,6 @@
 #define HELP_SAVE "For saving all the changes in the data file.\n"
 #define HELP_DEL "For deleting all data of students that meet the attached condition\
  A selection  query is submitted in the following format: 'del <Data Type> <Operator> <Value>' (For example - 'del id==300004530).\n"
-#define HELP_SAVE "For help and requirements for the various queries (For example - 'help' or 'help select').\n"
 #define HELP_STATE "For printing the state of the changes (add, update and delete) from the last 'save' query.\n"
 #define HELP_QUIT "For completing the server run and exiting the program (after saving the changes).\n"
 
@@ -60,16 +59,13 @@ enum Operators { big_eq = 1, bigger, sml_eq, smaller, not_eq , eq };
 void run_queries_loop(StudentList* student_list);
 
 // send the  query to the appropriate function
-int query_switch(const char* querie, StudentList* student_list);
+int query_switch(char* querie, StudentList* student_list);
 
 // select student by value
-void select_query(const char* query, StudentList* student_list);
+void select_query(StudentList* student_list, const char* query);
 
 // print documentation for the queries server
 void help_query(enum Requests  req);
-
-// print only the selection of students into a form
-void print_selection(StudentList*);
 
 // save all the changes on the file
 void save_changes(StudentList* student_list);
@@ -82,6 +78,9 @@ void print_state(StudentList* sl);
 
 // print a selection of students from the list in a form
 void print_selection(StudentList* student_list, enum Details detail_code, enum Operators operater_code, void* value);
+
+// find operator in a string
+int find_operator(const char* query);
 
 //// delete student from the list by given id
 //void delete_query(StudentList*, unsigned long const id);
