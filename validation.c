@@ -3,7 +3,7 @@
 static char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language",
 	[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
 
-int check_line(const char** token, const char* line, char* first_name,
+short check_line(char** token, char* line, char* first_name,
 	char* last_name, long* _id, short* course_code, short* mark)
 {
 	short count = 0;
@@ -51,31 +51,32 @@ int check_line(const char** token, const char* line, char* first_name,
 	return ++count;
 }
 
-int check_select_query(const char* query, enum Details* detail_code, enum Operators* operater_code, void** value)
+short check_select_query(char* query, enum Details* detail_code, enum Operators* operater_code, void** value)
 {
+	char help[] = "for help type 'help select'";
 	char name[MAX_LEN_NAME];
-	short mark, res = 0;
-	long _id;
-	float _average;
+	short mark = 0, res = 0;
+	long _id = 0;
+	float _average = 0;
 	char* token;
 	*operater_code = find_operator(query);
-	if (*operater_code)
+	token = strtok(query, SPECIAL_NOTS);
+	strip(&token);
+	*detail_code = find_item(token, detail_names, LEN_DETAILS_TYPES);
+
+	token = strtok(NULL, SPECIAL_NOTS);
+	if (token && !strlen(token)) // if the operator has tow chars
+		token = strtok(NULL, SPECIAL_NOTS);
+
+	if (*detail_code)
 	{
-		token = strtok(query, "<>!=");
-		strip(&token);
-		*detail_code = find_item(token, detail_names, LEN_DETAILS_TYPES);
-
-		token = strtok(NULL, "<>!=");
-		if (!strlen(token)) // if the operator has tow chars
-			token = strtok(NULL, "<>!=");
-
-		if (*detail_code)
+		if (*operater_code)
 		{
 			switch (*detail_code)
 			{
 			case f_name: case l_name:
 			{
-				if (check_name(token))
+				if (token && check_name(token))
 				{
 					strip(&token);
 					strcpy(name, token);
@@ -83,67 +84,59 @@ int check_select_query(const char* query, enum Details* detail_code, enum Operat
 					return ++res;
 				}
 				else
-				{
-					printf("Invalid value..\n");
-				}
+					printf("Invalid value.. %s\n", help);
 				break;
 			}
 			case id:
 			{
-				if (sscanf(token, " %ld", &_id) && check_id(_id))
+				if (token && sscanf(token, " %ld", &_id) && check_id(_id))
 				{
 					*value = &_id;
 					return ++res;
 				}
 				else
-				{
-					printf("Invalid value..\n");
-				}
+					printf("Invalid value.. %s\n", help);
 				break;
 			}
 			case c_lng: case cmp_nt: case cs_f:
 			{
-				if (sscanf(token, " %hd", &mark) && check_mark(mark))
+				if (token && sscanf(token, " %hd", &mark) && check_mark(mark))
 				{
 					*value = &mark;
 					return ++res;
 				}
 				else
-				{
-					printf("Invalid value..\n");
-				}
+					printf("Invalid value.. %s\n", help);
 			}
 			break;
 			case avrg:
 			{
-				if (sscanf(token, " %f", &_average) && check_mark((short)_average))
+				if (token && sscanf(token, " %f", &_average) && check_mark((short)_average))
 				{
 					*value = &_average;
 					return ++res;
 				}
 				else
-				{
-					printf("Invalid value..\n");
-				}
+					printf("Invalid value.. %s\n", help);
 			}
 			}
-
 		}
 		else
-			printf("Invalid detail..\n");
+			printf("Invalid operator.. %s\n", help);
 	}
 	else
-		printf("Invalid operator..\n");
+		printf("Invalid detail.. %s\n", help);
 
 	return res;
 }
 
-int check_set_query(const char* query, char* first_name, char* last_name,
+short check_set_query(char* query, char* first_name, char* last_name,
 	long* _id, short* course_code, short* mark)
 {
+	char help[] = "for help type 'help set'";
 	enum Detail detail;
-	long temp_id;
-	short temp_mark;
+	long temp_id = 0;
+	short temp_mark = 0;
 	unsigned short counter = 0, res = 0;
 	char* token;
 
@@ -155,47 +148,63 @@ int check_set_query(const char* query, char* first_name, char* last_name,
 			strip(&token);
 			detail = find_item(token, detail_names, LEN_DETAILS_TYPES);
 			if (!detail)
-				printf("Invalid detail: %s\n", (char*)token);
+				printf("Invalid detail: %s. %s\n", token, help);
 		}
 		else
 			switch (detail)
 			{
 			case f_name:
 			{
+				strip(&token);
 				if (check_name(token))
-					strcpy(first_name, token);
+					if (strlen(first_name))
+						printf("Double detail: %s. %s\n", detail_names[detail], help);
+					else
+						strcpy(first_name, token);
 				else
-					printf("Invalid detail: %s\n", (char*)token);
+					printf("Invalid value: %s. %s\n", token, help);
 				break;
 			}
 			case l_name:
 			{
+				strip(&token);
 				if (check_name(token))
-					strcpy(last_name, token);
+					if (strlen(last_name))
+						printf("Double detail: %s. %s\n", detail_names[detail], help);
+					else
+						strcpy(last_name, token);
 				else
-					printf("Invalid detail: %s\n", (char*)token);
+					printf("Invalid value: %s. %s\n", token, help);
 				break;
 			}
 			case id:
 			{
 				if (sscanf(token, " %ld", &temp_id) && check_id(temp_id))
 				{
-					*_id = temp_id;
-					res = 1;
+					if (*_id)
+						printf("Double detail: %s. %s\n", detail_names[detail], help);
+					else
+					{
+						*_id = temp_id;
+						res = 1;
+					}
 				}
 				else
-					printf("Invalid detail: %s\n", (char*)token);
+					printf("Invalid value: %s. %s\n", token, help);
 				break;
 			}
 			case c_lng: case cmp_nt: case cs_f:
 			{
 				if (sscanf(token, " %hd", &temp_mark) && check_mark(temp_mark))
-				{
-					*course_code = detail - c_lng;
-					*mark = temp_mark;
-				}
+					if (*mark)
+						printf("Double detail: %s. %s\n", detail_names[detail], help);
+					else
+					{
+						*course_code = detail - c_lng;
+						*mark = temp_mark;
+					}
 				else
-					printf("Invalid detail: %s\n", (char*)token);
+					printf("Invalid value: %s. %s\n", token, help);
 				break;
 			}
 			}
@@ -205,7 +214,7 @@ int check_set_query(const char* query, char* first_name, char* last_name,
 	return res;
 }
 
-int check_name(const char* txt)
+short check_name(const char* txt)
 {
 	if (!txt || !strlen(txt))
 		return 0;
@@ -215,17 +224,17 @@ int check_name(const char* txt)
 	return 1;
 }
 
-int check_id(const long id)
+short check_id(const long id)
 {
 	return (id > 0 && id < MAX_ID);
 }
 
-int check_mark(const short mark)
+short check_mark(const short mark)
 {
 	return (mark >= 0 && mark < MAX_MARK);
 }
 
-int is_ascii(const char* txt)
+short is_ascii(const char* txt)
 {
 	while (*txt)
 		if (*txt < 0 || *(txt++) > 127)
@@ -233,7 +242,7 @@ int is_ascii(const char* txt)
 	return 1;
 }
 
-int names_cmp(const char* name_a, const char* name_b)
+short names_cmp(const char* name_a, const char* name_b)
 {
 	while (*name_a && *name_b) {
 		char cmp = tolower(*(name_a++)) - tolower(*(name_b++));

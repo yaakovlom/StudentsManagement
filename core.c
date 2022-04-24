@@ -78,7 +78,7 @@ void strip(char* txt[])
 
 int find_item(char* item, char** arr, unsigned int len)
 {
-	for (int i = 1; i < len + 1; i++)
+	for (unsigned int i = 1; i < len + 1; i++)
 		if (item && !strcmp(item, arr[i]))
 			return i;
 	return 0;
@@ -87,12 +87,22 @@ int find_item(char* item, char** arr, unsigned int len)
 void set_student(StudentList* student_list, const char* first_name,
 	const char* last_name, const long id, const short course_code, const short mark)
 {
+	short resort = 0;
 	Student* student;
 
 	// try to find and update this student
 	student = find_student(student_list, id);
 	if (student)
+	{
+		if (strcmp(last_name, student->last_name)) // re put the student in order
+		{
+			resort = 1;
+			student = remove_student_from_list(student_list, student->id);
+		}
 		update_student(student, first_name, last_name, course_code, mark);
+		if (resort)
+			add_student_in_order(student_list, student);
+	}
 	// create a new student and add to the student_list
 	else
 	{
@@ -149,12 +159,12 @@ StudentList* add_student_in_order(StudentList* student_list, Student* student)
 		student->next = student_list->head;
 		student_list->head = student;
 	}
-	// find the correct place 
+	// find the correct place
 	else
 	{
-		Student* pre_cursor = student_list->head, * cursor = pre_cursor->next;
+		Student* pre_cursor = student_list->head, *cursor = pre_cursor->next;
 
-		while (cursor && names_cmp(cursor->last_name, student->last_name) < 0)
+		while (cursor && cursor != student_list->tail && names_cmp(cursor->last_name, student->last_name) < 0)
 		{
 			pre_cursor = cursor;
 			cursor = cursor->next;
@@ -175,6 +185,36 @@ Student* find_student(StudentList* student_list, const long id)
 			return cursor;
 		cursor = cursor->next;
 	}
+	return NULL;
+}
+
+Student* remove_student_from_list(StudentList* student_list, long const id)
+{
+	Student* pre_cursor = student_list->head, *cursor = pre_cursor->next;
+	if (student_list->len < 2) // if the student list has only one student
+	{
+		student_list->head = student_list->tail = NULL;
+		student_list->len--;
+		return pre_cursor;
+	}
+	else if (pre_cursor->id == id) // if it's the first student on the list
+	{
+		student_list->head = cursor;
+		student_list->len--;
+		return pre_cursor;
+	}
+	else
+		while (cursor)
+		{
+			if (cursor->id == id)
+			{
+				pre_cursor->next = cursor->next;
+				student_list->len--;
+				return cursor;
+			}
+			pre_cursor = cursor;
+			cursor = cursor->next;
+		}
 	return NULL;
 }
 
@@ -200,7 +240,6 @@ Student* update_student(Student* student, const char* first_name, const char* la
 
 int update_first_name(Student* student, const char* first_name)
 {
-	strip(&first_name);
 	// try to relocate memory space for student first name
 	char* temp = (char*)realloc(student->first_name, strlen(first_name) + 1);
 	if (temp)
@@ -215,7 +254,6 @@ int update_first_name(Student* student, const char* first_name)
 
 int update_last_name(Student* student, const char* last_name)
 {
-	strip(&last_name);
 	// try to relocate memory space for student last name
 	char* temp = (char*)realloc(student->last_name, strlen(last_name) + 1);
 	if (temp)

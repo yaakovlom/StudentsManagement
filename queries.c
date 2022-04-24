@@ -32,9 +32,8 @@ void run_queries_loop(StudentList* student_list)
 int query_switch(char* query, StudentList* student_list)
 {
 	enum Queries q_type = 0;
-	unsigned int temp, res;
 	char token[QUERY_LEN] = {0};
-	if (sscanf(query, " %s", token))
+	if (sscanf(query, " %6s", token))
 	{
 		query += strlen(token);
 		q_type = find_item(token, query_names, LEN_QUERIES_TYPES);
@@ -52,12 +51,7 @@ int query_switch(char* query, StudentList* student_list)
 		}
 		case set:
 		{
-			temp = student_list->len;
- 			res = set_query(query, student_list);
-			if (student_list->len > temp && res)
-				student_list->add_counter++;
-			else if (res)
-				student_list->update_counter++;
+ 			set_query(query, student_list);
 			break;
 		}
 		case print:
@@ -67,7 +61,7 @@ int query_switch(char* query, StudentList* student_list)
 		}
 		case del:
 		{
-			//delete_studnets(query, student_list);
+			delete_query(query, student_list);
 			break;
 		}
 		case save:
@@ -160,16 +154,23 @@ int find_operator(const char* query)
 	return 0;
 }
 
-int set_query(const char* query, StudentList* student_list)
+void set_query(const char* query, StudentList* student_list)
 {
+	unsigned int len;
 	long id = 0;
 	short course_code = 0, mark = 0, details_result = 0;
 	char line[MAX_LEN_LINE] = {0}, first_name[MAX_LEN_NAME] = {0}, last_name[MAX_LEN_NAME] = {0};
-	if (check_set_query(query, first_name, last_name, &id, &course_code, &mark))
+	if (check_set_query(query, first_name, last_name, &id, &course_code, &mark) && id)
+	{
+		len = student_list->len;
 		set_student(student_list, first_name, last_name, id, course_code, mark);
+		if (len == student_list->len)
+			student_list->update_counter++;
+		else
+			student_list->add_counter++;
+	}
 	else
-		return 0;
-	return 1;
+		printf("invalid query.. for help type help set\n");
 }
 
 void save_changes(StudentList* student_list)
@@ -288,7 +289,18 @@ void print_selection(StudentList* student_list, enum Details detail_code, enum O
 	print_bottom_form();
 }
 
-//void delete_studnets(const char* query, StudentList* student_list)
-//{
-//
-//}
+void delete_query(const char* query, StudentList* student_list)
+{
+	long _id;
+	Student* student;
+	if (*query && sscanf(query, " %ld", &_id) && check_id(_id))
+	{
+		student = remove_student_from_list(student_list, _id);
+		if (student)
+			free_student(student);
+		else
+			printf("Student not found..\n");
+	}
+	else
+		printf("Invalid query.. for help type 'help del'\n");
+}

@@ -5,10 +5,9 @@
 
 #include "core.h"
 
-
 #define LEN_OPERATOR_TYPES 6
 #define LEN_QUERIES_TYPES 8
-#define MAX_LEN_QUERY 100
+#define MAX_LEN_QUERY 90
 #define QUERY_LEN 7
 
 #define HELP_MAIN \
@@ -24,7 +23,7 @@
  - save:\n\
           For saving all the changes in the data file.\n\
  - del:\n\
-          For deleting all data of students that meet the attached condition (For example - 'del id==300004530).\n\
+          For deleting all data of students that meet the attached condition (For example - 'del id=300004530).\n\
  - help:\n\
           For help and requirements for the various queries (For example - 'help select').\n\
  - quit:\n\
@@ -43,10 +42,10 @@
  Set  query is submitted in the following format:\
  'set <id> = <value>, <detail> = <value>, ...'\
  Valid details: id (required), first name, last name, C language, Computer Networks, Computer Networks.\
- (For example - 'set first name=Jolie, second name=Angelina, id=300004530, C lang=80').\n"
+ (For example - 'set first name=Jolie, last name=Angelina, id=300004530, C language=80').\n"
 #define HELP_SAVE "For saving all the changes in the data file.\n"
-#define HELP_DEL "For deleting all data of students that meet the attached condition\
- A selection  query is submitted in the following format: 'del <Data Type> <Operator> <Value>' (For example - 'del id==300004530).\n"
+#define HELP_DEL "For deleting a student from the list by given id.\
+ A selection  query is submitted in the following format: 'del <id>' (For example - 'del 300004530).\n"
 #define HELP_STATE "For printing the state of the changes (add, update and delete) from the last 'save' query.\n"
 #define HELP_QUIT "For completing the server run and exiting the program (after saving the changes).\n"
 
@@ -63,6 +62,9 @@ int query_switch(char* querie, StudentList* student_list);
 
 // select student by value
 void select_query(StudentList* student_list, const char* query);
+
+// create or update student
+void set_query(const char* query, StudentList* student_list);
 
 // print documentation for the queries server
 void help_query(enum Requests  req);
@@ -82,8 +84,5 @@ void print_selection(StudentList* student_list, enum Details detail_code, enum O
 // find operator in a string
 int find_operator(const char* query);
 
-//// delete student from the list by given id
-//void delete_query(StudentList*, unsigned long const id);
-
-//// delete student by given id
-//void delete_studnets(Student* student, StudentList* student_list);
+// delete student from the list by given id
+void delete_query(const char* query, StudentList* student_list);

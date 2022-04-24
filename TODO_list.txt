@@ -1,4 +1,4 @@
 humming distance
 trie tree
 
-set first name=test, last name=me, id = 123456789, C language = 90
+fix over long id

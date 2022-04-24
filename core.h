@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #define COURSES_LEN 3
-#define MAX_LEN_LINE 90
+#define MAX_LEN_LINE 85
 #define MAX_LEN_NAME 20
 #define MAX_LEN_DETAIL 18
 #define MAX_LEN_ID 10
@@ -68,13 +68,13 @@ Student* update_student(Student* student, const char* first_name, const char* la
 int update_first_name(Student* student, const char* first_name);
 
 // update the student last name
-int update_last_name(Student* student, const char* last_name);
+int update_last_name(Student* student, char* last_name);
 
 // update single mark of the student 
 void update_mark(Student* student, const short course_code, const short mark);
 
 // remove student from the list by given id
-StudentList* remove_student(StudentList* list, long const id);
+Student* remove_student_from_list(StudentList* student_list, long const id);
 
 
 // print a single student into the form
@@ -88,7 +88,7 @@ void free_student(Student* s);
 void read_line(char line[MAX_LEN_LINE], FILE* in_file);
 
 // calculate average of the student marks
-float get_student_marks_avrage(Student* student);
+float get_student_marks_average(Student* student);
 
 
 // find item from a given array

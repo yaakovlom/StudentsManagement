@@ -1,7 +1,7 @@
 ﻿  queries.c
-C:\Users\Default\Documents\C\StudentsManagement\queries.c(20,16): warning C4013: 'is_ascii' undefined; assuming extern returning int
-C:\Users\Default\Documents\C\StudentsManagement\queries.c(56,20): warning C4013: 'set_query' undefined; assuming extern returning int
-C:\Users\Default\Documents\C\StudentsManagement\queries.c(151,24): warning C4013: 'check_select_query' undefined; assuming extern returning int
-C:\Users\Default\Documents\C\StudentsManagement\queries.c(168,21): warning C4013: 'check_set_query' undefined; assuming extern returning int
-C:\Users\Default\Documents\C\StudentsManagement\queries.c(224,22): warning C4013: 'names_cmp' undefined; assuming extern returning int
-  StudentsManagement.vcxproj -> C:\Users\Default\Documents\C\StudentsManagement\x64\Debug\StudentsManagement.exe
+C:\Users\student\Documents\C language\StudentsManagement\queries.c(20,16): warning C4013: 'is_ascii' undefined; assuming extern returning int
+C:\Users\student\Documents\C language\StudentsManagement\queries.c(145,24): warning C4013: 'check_select_query' undefined; assuming extern returning int
+C:\Users\student\Documents\C language\StudentsManagement\queries.c(163,21): warning C4013: 'check_set_query' undefined; assuming extern returning int
+C:\Users\student\Documents\C language\StudentsManagement\queries.c(225,22): warning C4013: 'names_cmp' undefined; assuming extern returning int
+C:\Users\student\Documents\C language\StudentsManagement\queries.c(296,55): warning C4013: 'check_id' undefined; assuming extern returning int
+  StudentsManagement.vcxproj -> C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe
