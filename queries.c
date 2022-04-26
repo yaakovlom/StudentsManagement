@@ -1,12 +1,14 @@
-#include "queries.h"
+#include "main.h"
 
 static char* query_names[] = { [quit] = "quit",[select] = "select",[set] = "set",[print] = "print",[del] = "del",[save] = "save",[help] = "help", [state] = "state"};
 
-static char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language"
-	,[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
+static char* detail_names[] = { [f_name] = "first name", [l_name] = "last name", [id] = "id", [c_lng] = "C language", 
+		[cmp_nt] = "Computer Networks", [cs_f] = "CS Fundamentals", [avrg] = "average" };
 
 static char* operator_names[] = { [big_eq] = ">=", [bigger] = ">" ,[sml_eq] = "<=", [smaller] = "<", [not_eq ] = "!=" ,[eq] = "=" };
 
+static void* (*cmp_funcs[])(Student* student, const void* value) = { [f_name] = f_name_cmp, [l_name] = l_name_cmp, [id] = id_cmp,
+		[c_lng] = c_lang_cmp, [cmp_nt] = cmp_nt_cmp, [cs_f] = cs_f_cmp, [avrg] = avrg_cmp};
 
 
 void run_queries_loop(StudentList* student_list)
@@ -137,13 +139,13 @@ void help_query(enum Queries req)
 	}
 }
 
-void select_query(StudentList* student_list, const char* query)
+void select_query(StudentList* student_list, char* query)
 {
-	enum Details detail_code = 0;
 	enum Operators operater_code = 0;
+	enum Details detail;
 	void* value = NULL;
-	if (check_select_query(query, &detail_code, &operater_code, &value))
-		print_selection(student_list, detail_code, operater_code, value);
+	if (check_select_query(query, &operater_code, &detail, &value))
+		print_selection(student_list, operater_code, detail, value);
 }
 
 int find_operator(const char* query)
@@ -154,13 +156,13 @@ int find_operator(const char* query)
 	return 0;
 }
 
-void set_query(const char* query, StudentList* student_list)
+void set_query(char* query, StudentList* student_list)
 {
 	unsigned int len;
 	long id = 0;
 	short course_code = 0, mark = 0, details_result = 0;
 	char line[MAX_LEN_LINE] = {0}, first_name[MAX_LEN_NAME] = {0}, last_name[MAX_LEN_NAME] = {0};
-	if (check_set_query(query, first_name, last_name, &id, &course_code, &mark) && id)
+	if (check_set_query(query, first_name, last_name, &id, &course_code, &mark) >= 2 && id)
 	{
 		len = student_list->len;
 		set_student(student_list, first_name, last_name, id, course_code, mark);
@@ -169,8 +171,8 @@ void set_query(const char* query, StudentList* student_list)
 		else
 			student_list->add_counter++;
 	}
-	else
-		printf("invalid query.. for help type help set\n");
+	else if (!id)
+		printf("Invalid query.. for help type help set\n");
 }
 
 void save_changes(StudentList* student_list)
@@ -208,45 +210,22 @@ void save_student(Student* s, FILE* out_file)
 }
 
 
-void print_selection(StudentList* student_list, enum Details detail_code, enum Operators operater_code, void* value)
+
+void print_selection(StudentList* student_list, enum Operators operater_code, enum Details detail, void* value)
 {
 	Student* cursor = student_list->head;
-	short result, select;
-
+	char result, select;
+	
 	print_head_form();
 	while (cursor)
 	{
-		// compare between the values
 		result = select = 0;
-		switch(detail_code)
+		// compare between the values
+		result = (*cmp_funcs[detail])(cursor, value);
+		if (result == -2)
 		{
-		case f_name:
-		{
-			result = names_cmp(cursor->first_name, (char*)value);
-			break;
-		}
-		case l_name:
-		{
-			result = names_cmp(cursor->last_name, (char*)value);
-			break;
-		}
-		case id:
-		{
-			result = (short)(cursor->id - *(long*)value);
-			break;
-		}
-		case c_lng:	case cs_f: case cmp_nt:
-		{
-			if (cursor->marks[detail_code - c_lng] == -1)
-			{
-				cursor = cursor->next;
-				continue;
-			}
-			result = (cursor->marks[detail_code - c_lng] - *(short*)value);
-			break;
-		}
-		case avrg:
-			result = (short)(cursor->marks_average - *(float*)value);
+			cursor = cursor->next;
+			continue;
 		}
 
 		// check the result by the operator
@@ -287,13 +266,15 @@ void print_selection(StudentList* student_list, enum Details detail_code, enum O
 		cursor = cursor->next;
 	}
 	print_bottom_form();
+	if (value)
+		free(value);
 }
 
 void delete_query(const char* query, StudentList* student_list)
 {
 	long _id;
 	Student* student;
-	if (*query && sscanf(query, " %ld", &_id) && check_id(_id))
+	if (*query && sscanf(query, " %9ld", &_id) && check_id(_id))
 	{
 		student = remove_student_from_list(student_list, _id);
 		if (student)

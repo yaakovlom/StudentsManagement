@@ -1,4 +1,4 @@
-#include "core.h"
+#include "main.h"
 
 static char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language",
 	[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
@@ -127,7 +127,7 @@ float get_student_marks_average(Student* student)
 Student* create_student(const long id)
 {
 	// try to locate memory space for student
-	Student* student = malloc(sizeof(Student));
+	Student* student = (Student*)malloc(sizeof(Student));
 	if (!student)
 		return NULL;
 	else
@@ -148,13 +148,13 @@ StudentList* add_student_in_order(StudentList* student_list, Student* student)
 	if (!student_list->head)
 		student_list->tail = student_list->head = student;
 	// if the student is the largest
-	else if (names_cmp(student_list->tail->last_name, student->last_name) <= 0)
+	else if (str_low_cmp(student_list->tail->last_name, student->last_name) <= 0)
 	{
 		student_list->tail->next = student;
 		student_list->tail = student;
 	}
 	// if the student is the smallest
-	else if (names_cmp(student_list->head->last_name, student->last_name) >= 0)
+	else if (str_low_cmp(student_list->head->last_name, student->last_name) >= 0)
 	{
 		student->next = student_list->head;
 		student_list->head = student;
@@ -164,7 +164,7 @@ StudentList* add_student_in_order(StudentList* student_list, Student* student)
 	{
 		Student* pre_cursor = student_list->head, *cursor = pre_cursor->next;
 
-		while (cursor && cursor != student_list->tail && names_cmp(cursor->last_name, student->last_name) < 0)
+		while (cursor && cursor != student_list->tail && str_low_cmp(cursor->last_name, student->last_name) < 0)
 		{
 			pre_cursor = cursor;
 			cursor = cursor->next;
@@ -339,10 +339,4 @@ void free_students_list(StudentList* student_list)
 		}
 		free(student_list);
 	}
-}
-
-void print_error_and_exit(const char* error, const short error_code)
-{
-	printf("%s", error);
-	exit(error_code);
 }

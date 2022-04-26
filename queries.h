@@ -1,10 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
-#include "core.h"
-
 #define LEN_OPERATOR_TYPES 6
 #define LEN_QUERIES_TYPES 8
 #define MAX_LEN_QUERY 90
@@ -61,10 +54,10 @@ void run_queries_loop(StudentList* student_list);
 int query_switch(char* querie, StudentList* student_list);
 
 // select student by value
-void select_query(StudentList* student_list, const char* query);
+void select_query(StudentList* student_list, char* query);
 
 // create or update student
-void set_query(const char* query, StudentList* student_list);
+void set_query(char* query, StudentList* student_list);
 
 // print documentation for the queries server
 void help_query(enum Requests  req);
@@ -79,7 +72,7 @@ void save_student(Student* s, FILE* out_file);
 void print_state(StudentList* sl);
 
 // print a selection of students from the list in a form
-void print_selection(StudentList* student_list, enum Details detail_code, enum Operators operater_code, void* value);
+void print_selection(StudentList* student_list, enum Operators operater_code, enum Details detail, void* value);
 
 // find operator in a string
 int find_operator(const char* query);

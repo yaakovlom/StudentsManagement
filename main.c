@@ -1,4 +1,4 @@
-#include "core.h"
+#include "main.h"
 
 int main()
 {
@@ -10,6 +10,6 @@ int main()
 		free_students_list(student_list);
 	}
 	else
-		print_error_and_exit("", -1);
+		exit(-1);
 	return 0;
 }

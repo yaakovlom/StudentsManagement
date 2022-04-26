@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #define COURSES_LEN 3
 #define MAX_LEN_LINE 85
 #define MAX_LEN_NAME 20
@@ -45,9 +40,6 @@ void print_all_students(StudentList*);
 // free all the students list memory
 void free_students_list(StudentList*);
 
-// print the error massage and exit with the given code
-void print_error_and_exit(const char* error, const short error_code);
-
 
 // add or update of the student details
 void set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const short course_code, const short mark);
@@ -68,7 +60,7 @@ Student* update_student(Student* student, const char* first_name, const char* la
 int update_first_name(Student* student, const char* first_name);
 
 // update the student last name
-int update_last_name(Student* student, char* last_name);
+int update_last_name(Student* student, const char* last_name);
 
 // update single mark of the student 
 void update_mark(Student* student, const short course_code, const short mark);

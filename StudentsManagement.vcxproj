@@ -152,6 +152,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="queries.h" />
     <ClInclude Include="validation.h" />
   </ItemGroup>
