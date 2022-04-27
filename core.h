@@ -5,6 +5,7 @@
 #define MAX_LEN_ID 10
 
 #define FILE_NAME "DB_studs.csv"
+#define MEMORY_ERROR "Cannot locate memory...\n"
 
 #define FORM_HEADERS(_f_name, _l_name, _id, _c_lng, _cmp_nt, _cs_f, _avrg) "| "_id" | "_f_name" | "_l_name" | "_c_lng" | "_cmp_nt" | "_cs_f" | "_avrg" |\n"
 #define SPLIT_LINE   "+-----------+------------------+-------------------+-----------+-----------+-----------+---------+\n"
@@ -12,6 +13,7 @@
 
 
 enum Details { f_name = 1, l_name, id, c_lng, cmp_nt, cs_f, avrg };
+enum State { failed, updated, added };
 
 typedef struct Student {
 	struct Student* next;
@@ -23,7 +25,6 @@ typedef struct Student {
 } Student;
 
 typedef struct StudentList {
-	unsigned long len;
 	Student* head;
 	Student* tail;
 	unsigned short update_counter;
@@ -42,7 +43,7 @@ void free_students_list(StudentList*);
 
 
 // add or update of the student details
-void set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const short course_code, const short mark);
+enum State set_student(StudentList* student_list, const char* first_name, const char* last_name, const long id, const int course_code, const short mark);
 
 // create a new student (update id only)
 Student* create_student(long const id);
@@ -54,7 +55,7 @@ StudentList* add_student_in_order(StudentList* list, Student* student);
 Student* find_student(StudentList* list, long const id);
 
 // update all the details of the student
-Student* update_student(Student* student, const char* first_name, const char* last_name, const short course_code, const short mark);
+Student* update_student(Student* student, const char* first_name, const char* last_name, const int course_code, const short mark);
 
 // update the student first name
 int update_first_name(Student* student, const char* first_name);
@@ -63,7 +64,7 @@ int update_first_name(Student* student, const char* first_name);
 int update_last_name(Student* student, const char* last_name);
 
 // update single mark of the student 
-void update_mark(Student* student, const short course_code, const short mark);
+void update_mark(Student* student, const int course_code, const short mark);
 
 // remove student from the list by given id
 Student* remove_student_from_list(StudentList* student_list, long const id);

@@ -15,8 +15,8 @@
             (For example - 'set first name=Jolie, second name=Angelina, id=300004530, C lang=80').\n\
  - save:\n\
           For saving all the changes in the data file.\n\
- - del:\n\
-          For deleting all data of students that meet the attached condition (For example - 'del id=300004530).\n\
+ - delete:\n\
+          For deleting all data of students that meet the attached condition (For example - 'delete id=300004530).\n\
  - help:\n\
           For help and requirements for the various queries (For example - 'help select').\n\
  - quit:\n\
@@ -27,18 +27,18 @@
 "For selecting students that meet the attached condition.\
  A selection  query is submitted in the following format:\
  'select <detail> <operator> <value>'\
- Valid details: id, first name, last name, C language, Computer Networks, Computer Networks, average.\
+ Valid details: id, first name, last name, C language, Computer Networks, CS Fundamentals, average.\
  Valid operators: <, >, =, !=.\
  (For example - 'select first name = Jolie, or 'select average > 80').\n"
 #define HELP_SET \
 "For adding new student or updating student data.\
  Set  query is submitted in the following format:\
  'set <id> = <value>, <detail> = <value>, ...'\
- Valid details: id (required), first name, last name, C language, Computer Networks, Computer Networks.\
+ Valid details: id (required), first name, last name, C language, Computer Networks, CS Fundamentals.\
  (For example - 'set first name=Jolie, last name=Angelina, id=300004530, C language=80').\n"
 #define HELP_SAVE "For saving all the changes in the data file.\n"
 #define HELP_DEL "For deleting a student from the list by given id.\
- A selection  query is submitted in the following format: 'del <id>' (For example - 'del 300004530).\n"
+ A selection  query is submitted in the following format: 'delete <id>' (For example - 'delete 300004530).\n"
 #define HELP_STATE "For printing the state of the changes (add, update and delete) from the last 'save' query.\n"
 #define HELP_QUIT "For completing the server run and exiting the program (after saving the changes).\n"
 
@@ -51,7 +51,7 @@ enum Operators { big_eq = 1, bigger, sml_eq, smaller, not_eq , eq };
 void run_queries_loop(StudentList* student_list);
 
 // send the  query to the appropriate function
-int query_switch(char* querie, StudentList* student_list);
+enum Queries query_switch(char* querie, StudentList* student_list);
 
 // select student by value
 void select_query(StudentList* student_list, char* query);
@@ -75,7 +75,7 @@ void print_state(StudentList* sl);
 void print_selection(StudentList* student_list, enum Operators operater_code, enum Details detail, void* value);
 
 // find operator in a string
-int find_operator(const char* query);
+enum Operators find_operator(char* query);
 
 // delete student from the list by given id
-void delete_query(const char* query, StudentList* student_list);
+void delete_query(char* query, StudentList* student_list);

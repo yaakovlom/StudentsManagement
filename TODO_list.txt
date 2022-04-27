@@ -1,4 +1,10 @@
-humming distance
+﻿humming distance
 trie tree
 
-fix over long id
+5. אתה משתמש במשתנה static ואני לא בטוח שמי שיראה את זה יאהב את זה. אני חושב שזה לא כ"כ מצוי וצריך סיבה טובה.
+
+int argc, char const *argv[]
+if (argc < 2)
+print_error/
+
+open_file(argc > 1 ? args[0] : defulte)
