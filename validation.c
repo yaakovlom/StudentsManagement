@@ -23,8 +23,7 @@ int check_line(char** token, char* line, char* first_name,
 	strip(token);
 	if (!check_name(*token))
 		return count;
-	else
-		strcpy(first_name, *token);
+	strcpy(first_name, *token);
 	*token = strtok(NULL, ",");
 	count++;
 
@@ -32,8 +31,7 @@ int check_line(char** token, char* line, char* first_name,
 	strip(token);
 	if (!check_name(*token))
 		return count;
-	else
-		strcpy(last_name, *token);
+	strcpy(last_name, *token);
 	count++;
 	*token = strtok(NULL, ",");
 
@@ -93,61 +91,66 @@ int check_select_query(char* query, enum Operators* operater_code, enum Details 
 				// locate memory
 				*value = (char*)malloc(MAX_LEN_NAME);
 				if (*value == NULL)
+				{
 					printf(MEMORY_ERROR);
-
-				else if (*query && *value && check_name(query))
+					return res;
+				}
+				// set the value
+				if (*query && *value && check_name(query))
 				{
 					strcpy(*value, query);
-					res++;
+					return ++res;
 				}
-				break;
 			}
 			case id:
 			{
 				// locate memory
 				*value = (long*)malloc(sizeof(long));
 				if (*value == NULL)
+				{
 					printf(MEMORY_ERROR);
-
+					return res;
+				}
 				// set the value
-				else if (*query && *value &&\
+				if (*query && *value &&\
 					check_number(query) &&\
 					sscanf(query, "%ld", (long*)*value) &&\
 					check_id(**(long**)value))
-					res++;
-				break;
+					return ++res;
 			}
 			case c_lng: case cmp_nt: case cs_f:
 			{
 				// locate memory
 				*value = (short*)malloc(sizeof(short));
 				if (*value == NULL)
+				{
 					printf(MEMORY_ERROR);
-
+					return res;
+				}
 				// set the value
-				else if (*query && *value &&\
+				if (*query && *value &&\
 					check_number(query) &&\
 					sscanf(query, "%hd", (short*)*value) &&\
 					check_mark(**(short**)value))
-					res++;
-				break;
+					return ++res;
 			}
 			case avrg:
 			{
 				// locate memory
 				*value = (float*)malloc(sizeof(float));
 				if (*value == NULL)
+				{
 					printf(MEMORY_ERROR);
-
+					return res;
+				}
 				// set the value
-				else if (*query && *value &&\
+				if (*query && *value &&\
 					check_number(query) &&\
 					sscanf(query, "%f", (float*)*value) &&\
 					check_average(**(float**)value))
-					res++;
+					return ++res;
 			}}
-			if (!res)
-				printf("  Invalid value '%s'. %s\n", query, help);
+			printf("  Invalid value '%s'. %s\n", query, help);
 		}
 		else
 			printf("  Invalid operator '%s'. %s\n", oprator, help);

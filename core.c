@@ -41,15 +41,11 @@ StudentList* read_students_data()
 
 			return student_list;
 		}
-		else
-		{
-			free(student_list);
-			printf("Cannot open input file\n");
-			return NULL;
-		}
-	}
-	else
+		free(student_list);
+		printf("Cannot open input file\n");
 		return NULL;
+	}
+	return NULL;
 }
 
 void read_line(char line[MAX_LEN_LINE], FILE* stream)
@@ -98,7 +94,7 @@ enum State set_student(StudentList* student_list, const char* first_name,
 
 	if (student != NULL) // update student details and re put the student in order
 	{
-		if (resort = str_low_cmp(last_name, student->last_name)) // if the last name changed - re put in order
+		if (resort = (*last_name) && (str_low_cmp(last_name, student->last_name)) != 0) // if the last name changed - re put in order
 			student = remove_student_from_list(student_list, student->id);
 
 		if (update_student(student, first_name, last_name, course_code, mark) == NULL)
@@ -108,18 +104,16 @@ enum State set_student(StudentList* student_list, const char* first_name,
 			add_student_in_order(student_list, student);
 		return updated;
 	}
-	else // create a new student and add to the student_list
+
+	// create a new student and add to the student_list
+	student = create_student(id);
+	if (student != NULL)
 	{
-		student = create_student(id);
-		if (student != NULL)
-		{
-			update_student(student, first_name, last_name, course_code, mark);
-			student_list = add_student_in_order(student_list, student);	
-			return added;
-		}
-		else
-			return failed;
+		update_student(student, first_name, last_name, course_code, mark);
+		student_list = add_student_in_order(student_list, student);	
+		return added;
 	}
+	return failed;
 }
 
 Student* create_student(const long id)
@@ -127,9 +121,21 @@ Student* create_student(const long id)
 	Student* student = (Student*)malloc(sizeof(Student));
 	if (student != NULL)
 	{
+		student->first_name = (char*)calloc(1, sizeof(char));
+		if (student->first_name == NULL)
+		{
+			free(student);
+			return NULL;
+		}
+		student->last_name = (char*)calloc(1, sizeof(char));
+		if (student->last_name == NULL)
+		{
+			free(student->first_name);
+			free(student);
+			return NULL;
+		}
 		student->id = id;
 		student->next = NULL;
-		student->last_name = student->first_name = NULL;
 		student->marks[0] = student->marks[1] = student->marks[2] = -1;
 		student->marks_average = 0;
 	}
@@ -212,7 +218,7 @@ Student* remove_student_from_list(StudentList* student_list, long const id)
 Student* update_student(Student* student, const char* first_name, const char* last_name, const int course_code, const short mark)
 {
 	// update first and last name
-	if (first_name && !update_first_name(student, first_name) || last_name && !update_last_name(student, last_name))
+	if (*first_name && !update_first_name(student, first_name) || *last_name && !update_last_name(student, last_name))
 	{
 		printf(MEMORY_ERROR);
 		return NULL;
@@ -235,8 +241,7 @@ int update_first_name(Student* student, const char* first_name)
 		strcpy(student->first_name, first_name);
 		return 1;
 	}
-	else
-		return 0;
+	return 0;
 }
 
 int update_last_name(Student* student, const char* last_name)
@@ -249,8 +254,7 @@ int update_last_name(Student* student, const char* last_name)
 		strcpy(student->last_name, last_name);
 		return 1;
 	}
-	else
-		return 0;
+	return 0;
 }
 
 void update_mark(Student* student, const int course_code, const short mark)
@@ -278,14 +282,17 @@ void print_head_form()
 	printf(SPLIT_LINE);
 }
 
-void print_bottom_form()
+void print_bottom_form(unsigned int len)
 {
 	printf(SPLIT_LINE);
+	printf(SUM_LINE, len);
+	printf(END_LINE);
 	printf("\n");
 }
 
 void print_all_students(StudentList* student_list)
 {
+	unsigned int len = 0;
 	if (student_list->head != NULL)
 	{
 		Student* cursor = student_list->head;
@@ -293,10 +300,11 @@ void print_all_students(StudentList* student_list)
 		print_head_form();
 		while (cursor)
 		{
+			len++;
 			print_student(cursor);
 			cursor = cursor->next;
 		}
-		print_bottom_form();
+		print_bottom_form(len);
 	}
 	else
 		printf("There is no students in the list yet..\n\n");

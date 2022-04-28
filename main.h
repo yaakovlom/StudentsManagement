@@ -6,4 +6,3 @@
 #include "core.h"
 #include "queries.h"
 #include "validation.h"
-

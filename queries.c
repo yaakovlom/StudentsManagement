@@ -36,7 +36,7 @@ enum Queries  query_switch(char* query, StudentList* student_list)
 		printf("Invalid input.. (ASCII chars only)\n");
 		return q_type;
 	}
-	else if (sscanf(query, " %6s", token))
+	if (sscanf(query, " %6s", token))
 	{
 		query += strlen(token);
 		q_type = find_item(token, query_names, LEN_QUERIES_TYPES);
@@ -185,7 +185,7 @@ void set_query(char* query, StudentList* student_list)
 			printf("  The query failed.\n");
 		}
 	}
-	else if (!_id)
+	else
 		printf("  Invalid query.. for help type help set\n");
 }
 
@@ -204,6 +204,7 @@ void save_changes(StudentList* student_list)
 		student_list->add_counter = 0;
 		student_list->update_counter = 0;
 		student_list->delete_counter = 0;
+		printf("  The changes saved successfully.");
 	}
 	else
 		printf("  Cannot open input file\n");
@@ -228,12 +229,12 @@ void save_student(Student* s, FILE* out_file)
 void print_selection(StudentList* student_list, enum Operators operater_code, enum Details detail, void* value)
 {
 	Student* cursor = student_list->head;
-	int result, select;
+	int result;
+	unsigned int selection_len = 0;
 	
-	print_head_form();
 	while (cursor)
 	{
-		result = select = 0;
+		result = 0;
 		// compare between the values
 		result = (*cmp_funcs[detail])(cursor, value);
 		if (result == -2)
@@ -247,39 +248,47 @@ void print_selection(StudentList* student_list, enum Operators operater_code, en
 		{
 		case big_eq:
 		{
-			select = (result >= 0);
+			result = (result >= 0);
 			break;
 		}
 		case bigger:
 		{
-			select = (result > 0);
+			result = (result > 0);
 			break;
 		}
 		case sml_eq:
 		{
-			select = (result <= 0);
+			result = (result <= 0);
 			break;
 		}
 		case smaller:
 		{
-			select = (result < 0);
+			result = (result < 0);
 			break;
 		}
 		case not_eq:
 		{
-			select = (result != 0);
+			result = (result != 0);
 			break;
 		}
 		case eq:
-			select = (result == 0);
+			result = (result == 0);
 		}
 		
 		// select or not
-		if (select)
+		if (result)
+		{
+			if (!selection_len) // if its the first student in the selection
+				print_head_form();
 			print_student(cursor);
+			selection_len++;
+		}
 		cursor = cursor->next;
 	}
-	print_bottom_form();
+	if (selection_len)
+		print_bottom_form(selection_len);
+	else
+		printf("  No data found..\n");
 	if (value != NULL)
 		free(value);
 }

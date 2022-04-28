@@ -1,4 +1,2 @@
-﻿  queries.c
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(12,84): warning C4047: 'initializing': 'void *(__cdecl *)(Student *,const void *)' differs in levels of indirection from 'int (__cdecl *)(Student *,const void *)'
-C:\Users\student\Documents\C language\StudentsManagement\queries.c(238,47): warning C4047: '=': 'int' differs in levels of indirection from 'void *'
+﻿  core.c
   StudentsManagement.vcxproj -> C:\Users\student\Documents\C language\StudentsManagement\x64\Debug\StudentsManagement.exe

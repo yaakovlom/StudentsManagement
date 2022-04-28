@@ -4,43 +4,45 @@
 #define QUERY_LEN 7
 
 #define HELP_MAIN \
-"Enter one of the following queries:\n\
- - print:\n\
+"  This is a query server for managing the students data. please enter one of the following queries:\n\
+   - print:\n\
           For printing all student data.\n\
- - select:\n\
+   - select:\n\
           For selecting students that meet the attached condition.\n\
-            (For example - 'select first name == Jolie, or 'select average > 80').\n\
- - set:\n\
+            (For example - 'select first name = Jolie, or 'select average > 80').\n\
+   - set:\n\
           For adding or updating student data\n\
             (For example - 'set first name=Jolie, second name=Angelina, id=300004530, C lang=80').\n\
- - save:\n\
+   - save:\n\
           For saving all the changes in the data file.\n\
- - delete:\n\
-          For deleting all data of students that meet the attached condition (For example - 'delete id=300004530).\n\
- - help:\n\
+   - delete:\n\
+          For deleting all data of students that meet the attached condition (For example - 'delete 300004530).\n\
+   - help:\n\
           For help and requirements for the various queries (For example - 'help select').\n\
- - quit:\n\
+   - quit:\n\
           For completing the server run and exiting the program.\n"
 
-#define HELP_PRINT "For printing all student data.\n"
+#define HELP_PRINT "  For printing all student data.\n"
 #define HELP_SELECT \
-"For selecting students that meet the attached condition.\
- A selection  query is submitted in the following format:\
- 'select <detail> <operator> <value>'\
- Valid details: id, first name, last name, C language, Computer Networks, CS Fundamentals, average.\
- Valid operators: <, >, =, !=.\
- (For example - 'select first name = Jolie, or 'select average > 80').\n"
+"  For selecting students that meet the attached condition.\n\n\
+  - A selection  query is submitted in the following format:\n\
+        'select <detail> <operator> <value>'\n\
+  - Valid details: id, first name, last name, C language, Computer Networks, CS Fundamentals, average.\n\
+  - Valid operators: <, >, =, !=.\n\
+        (For example - 'select first name = Jolie, or 'select average > 80').\n"
 #define HELP_SET \
-"For adding new student or updating student data.\
- Set  query is submitted in the following format:\
- 'set <id> = <value>, <detail> = <value>, ...'\
- Valid details: id (required), first name, last name, C language, Computer Networks, CS Fundamentals.\
- (For example - 'set first name=Jolie, last name=Angelina, id=300004530, C language=80').\n"
-#define HELP_SAVE "For saving all the changes in the data file.\n"
-#define HELP_DEL "For deleting a student from the list by given id.\
- A selection  query is submitted in the following format: 'delete <id>' (For example - 'delete 300004530).\n"
-#define HELP_STATE "For printing the state of the changes (add, update and delete) from the last 'save' query.\n"
-#define HELP_QUIT "For completing the server run and exiting the program (after saving the changes).\n"
+"  For adding new student or updating student data.\n\n\
+  - Set  query is submitted in the following format:\n\
+        'set <id> = <value>, <detail> = <value>, ...'\n\
+  - Valid details: id (required), first name, last name, C language, Computer Networks, CS Fundamentals.\n\
+  - A set query must contain at least one data (in addition to the ID), but the order of the data does not matter.\n\
+  - Only one score per query can be updated.\n\
+        (For example - 'set first name=Jolie, last name=Angelina, id=300004530, C language=80').\n"
+#define HELP_SAVE "  For saving all the changes in the data file.\n"
+#define HELP_DEL "  For deleting a student from the list by given id.\n\n\
+  - A delete query is submitted in the following format: 'delete <id>' (For example - 'delete 300004530).\n"
+#define HELP_STATE "  For printing the state of the changes (add, update and delete) from the last 'save' query.\n"
+#define HELP_QUIT "  For completing the server run and exiting the program (after saving the changes).\n"
 
 
 enum Queries { quit = 1, select, set, print, del, state, save, help };

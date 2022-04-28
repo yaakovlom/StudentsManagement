@@ -9,7 +9,8 @@
 
 #define FORM_HEADERS(_f_name, _l_name, _id, _c_lng, _cmp_nt, _cs_f, _avrg) "| "_id" | "_f_name" | "_l_name" | "_c_lng" | "_cmp_nt" | "_cs_f" | "_avrg" |\n"
 #define SPLIT_LINE   "+-----------+------------------+-------------------+-----------+-----------+-----------+---------+\n"
-
+#define SUM_LINE     "| sum of students: %-5u                                                                         |\n"
+#define END_LINE     "+------------------------------------------------------------------------------------------------+\n"
 
 
 enum Details { f_name = 1, l_name, id, c_lng, cmp_nt, cs_f, avrg };
@@ -94,4 +95,4 @@ void strip(char* txt[]);
 void print_head_form();
 
 // print bottom of a form
-void print_bottom_form();
+void print_bottom_form(unsigned int len);
