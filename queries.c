@@ -24,6 +24,8 @@ void run_queries_loop(StudentList* student_list)
 		read_line(query, stdin);
 		if (strlen(query))
 			q_type = query_switch(query, student_list);
+		else
+			printf("  Invalid query type.. for help type 'help'.\n");
 	} while (q_type != q_quit);
 }
 
