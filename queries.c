@@ -2,14 +2,14 @@
 
 
 // array of query names
-char* query_names[] = { [quit] = "quit",[select] = "select",[set] = "set",[print] = "print",[del] = "delete",[save] = "save",[help] = "help", [state] = "state"};
+char* query_names[] = { [q_quit] = "quit",[q_select] = "select",[q_set] = "set",[q_print] = "print",[q_del] = "delete",[q_save] = "save",[q_help] = "help", [q_state] = "state"};
 // array of the detail names
 char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language",
 		[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
 // array of the operator strings 
 char* operator_names[] = { [big_eq] = ">=", [bigger] = ">" ,[sml_eq] = "<=", [smaller] = "<", [not_eq ] = "!=" ,[eq] = "=" };
 // array of pointers to compare functions
-void* (*cmp_funcs[])(Student* student, const void* value) = { [f_name] = f_name_cmp, [l_name] = l_name_cmp, [id] = id_cmp,
+int (*cmp_funcs[])(Student*, const void*) = { [f_name] = f_name_cmp, [l_name] = l_name_cmp, [id] = id_cmp,
 		[c_lng] = c_lang_cmp, [cmp_nt] = cmp_nt_cmp, [cs_f] = cs_f_cmp, [avrg] = avrg_cmp};
 
 
@@ -24,7 +24,7 @@ void run_queries_loop(StudentList* student_list)
 		read_line(query, stdin);
 		if (strlen(query))
 			q_type = query_switch(query, student_list);
-	} while (q_type != quit);
+	} while (q_type != q_quit);
 }
 
 enum Queries  query_switch(char* query, StudentList* student_list)
@@ -42,37 +42,37 @@ enum Queries  query_switch(char* query, StudentList* student_list)
 		q_type = find_item(token, query_names, LEN_QUERIES_TYPES);
 		switch (q_type)
 		{
-		case quit:
+		case q_quit:
 		{
 			//save_changes(student_list);
 			break;
 		}
-		case select:
+		case q_select:
 		{
 			select_query(student_list, query);
 			break;
 		}
-		case set:
+		case q_set:
 		{
  			set_query(query, student_list);
 			break;
 		}
-		case print:
+		case q_print:
 		{
 			print_all_students(student_list);
 			break;
 		}
-		case del:
+		case q_del:
 		{
 			delete_query(query, student_list);
 			break;
 		}
-		case save:
+		case q_save:
 		{
 			save_changes(student_list);
 			break;
 		}
-		case help:
+		case q_help:
 		{
 			if (*query)
 			{
@@ -83,7 +83,7 @@ enum Queries  query_switch(char* query, StudentList* student_list)
 				help_query(0);
 			break;
 		}
-		case state:
+		case q_state:
 		{
 			print_state(student_list);
 			break;
@@ -100,37 +100,37 @@ void help_query(enum Queries req)
 {
 	switch (req)
 	{
-	case quit:
+	case q_quit:
 	{
 		printf(HELP_QUIT);
 		break;
 	}
-	case select:
+	case q_select:
 	{
 		printf(HELP_SELECT);
 		break;
 	}
-	case set:
+	case q_set:
 	{
 		printf(HELP_SET);
 		break;
 	}
-	case print:
+	case q_print:
 	{
 		printf(HELP_PRINT);
 		break;
 	}
-	case del:
+	case q_del:
 	{
 		printf(HELP_DEL);
 		break;
 	}
-	case state:
+	case q_state:
 	{
 		printf(HELP_STATE);
 		break;
 	}
-	case save:
+	case q_save:
 	{
 		printf(HELP_SAVE);
 		break;

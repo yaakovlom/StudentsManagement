@@ -45,7 +45,7 @@
 #define HELP_QUIT "  For completing the server run and exiting the program (after saving the changes).\n"
 
 
-enum Queries { quit = 1, select, set, print, del, state, save, help };
+enum Queries { q_quit = 1, q_select, q_set, q_print, q_del, q_state, q_save, q_help };
 enum Operators { big_eq = 1, bigger, sml_eq, smaller, not_eq , eq };
 
 
@@ -62,7 +62,7 @@ void select_query(StudentList* student_list, char* query);
 void set_query(char* query, StudentList* student_list);
 
 // print documentation for the queries server
-void help_query(enum Requests  req);
+void help_query(enum Queries req);
 
 // save all the changes on the file
 void save_changes(StudentList* student_list);
