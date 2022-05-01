@@ -66,19 +66,19 @@ int check_select_query(char* query, enum Operators* operater_code, enum Details 
 	int res = 0;
 
 	// create copy of the query
-	char temp[MAX_LEN_QUERY] = { 0 }, *operator = temp;
+	char temp[MAX_LEN_QUERY] = { 0 }, *oprator = temp;
 	strcpy(temp, query);
 
 	// find the detail type code
 	query = strtok(query, SPECIAL_NOTS);
-	operator += strlen(query);
+	oprator += strlen(query);
 	strip(&query);
 	*detail_code = find_item(query, detail_names, LEN_DETAILS_TYPES);
 	if (*detail_code)
 	{
 		// find the operator code
-		strip(&operator);
-		*operater_code = find_operator(operator);
+		strip(&oprator);
+		*operater_code = find_operator(oprator);
 		if (*operater_code)
 		{
 			// check and set the value
@@ -153,7 +153,7 @@ int check_select_query(char* query, enum Operators* operater_code, enum Details 
 			printf("  Invalid value '%s'. %s\n", query, help);
 		}
 		else
-			printf("  Invalid operator '%s'. %s\n", operator, help);
+			printf("  Invalid operator '%s'. %s\n", oprator, help);
 	}
 	else
 		printf("  Invalid detail: '%s'. %s\n", query, help);
@@ -165,7 +165,7 @@ int check_set_query(char* query, char* first_name, char* last_name,
 	long* _id, int* course_code, short* mark)
 {
 	long temp_id = 0;
-	enum Details detail = 0;
+	enum Detail detail = 0;
 	int i = 0, res = 0;
 	short temp_mark = 0;
 	char help[] = "for help type 'help set'", *token;
