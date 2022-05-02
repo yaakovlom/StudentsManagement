@@ -1,3 +1,4 @@
+#define MAX_LEN_FILE_NAME 25
 #define COURSES_LEN 3
 #define MAX_LEN_LINE 85
 #define MAX_LEN_NAME 20
@@ -34,7 +35,7 @@ typedef struct StudentList {
 } StudentList;
 
 // read the students data from the file
-StudentList* read_students_data();
+StudentList* read_students_data(char file_name[]);
 
 // print all the students into a form
 void print_all_students(StudentList*);
@@ -96,3 +97,9 @@ void print_head_form();
 
 // print bottom of a form
 void print_bottom_form(unsigned int len);
+
+// save all the changes on the file
+void save_changes(StudentList* student_list, char file_name[]);
+
+// print a single student on the given file
+void save_student(Student* s, FILE* out_file);

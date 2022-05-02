@@ -1,19 +1,6 @@
 #include "main.h"
 
-
-// array of query names
-char* query_names[] = { [q_quit] = "quit",[q_select] = "select",[q_set] = "set",[q_print] = "print",[q_del] = "delete",[q_save] = "save",[q_help] = "help", [q_state] = "state"};
-// array of the detail names
-char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language",
-		[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
-// array of the operator strings 
-char* operator_names[] = { [big_eq] = ">=", [bigger] = ">" ,[sml_eq] = "<=", [smaller] = "<", [not_eq ] = "!=" ,[eq] = "=" };
-// array of pointers to compare functions
-int (*cmp_funcs[])(Student*, const void*) = { [f_name] = f_name_cmp, [l_name] = l_name_cmp, [id] = id_cmp,
-		[c_lng] = c_lang_cmp, [cmp_nt] = cmp_nt_cmp, [cs_f] = cs_f_cmp, [avrg] = avrg_cmp};
-
-
-void run_queries_loop(StudentList* student_list)
+void run_queries_loop(StudentList* student_list, char file_name[])
 {
 	char query[MAX_LEN_QUERY] = {0};
 	enum Queries q_type = 0;
@@ -23,7 +10,11 @@ void run_queries_loop(StudentList* student_list)
 		printf("~>");
 		read_line(query, stdin);
 		if (strlen(query))
+		{
 			q_type = query_switch(query, student_list);
+			if (q_type == q_save)
+				save_changes(student_list, file_name);
+		}
 		else
 			printf("  Invalid query type.. for help type 'help'.\n");
 	} while (q_type != q_quit);
@@ -31,8 +22,12 @@ void run_queries_loop(StudentList* student_list)
 
 enum Queries  query_switch(char* query, StudentList* student_list)
 {
+	// array of query names
+	static char* query_names[] = { [q_quit] = "quit",[q_select] = "select",[q_set] = "set",[q_print] = "print",
+		[q_del] = "delete",[q_save] = "save",[q_help] = "help", [q_state] = "state"};
 	enum Queries q_type = 0;
 	char token[QUERY_LEN] = {0};
+
 	if (!is_ascii(query))
 	{
 		printf("Invalid input.. (ASCII chars only)\n");
@@ -41,12 +36,11 @@ enum Queries  query_switch(char* query, StudentList* student_list)
 	if (sscanf(query, " %6s", token))
 	{
 		query += strlen(token);
-		q_type = find_item(token, query_names, LEN_QUERIES_TYPES);
+		q_type = find_item(token, query_names, MAX_LEN_QUERIES_TYPES);
 		switch (q_type)
 		{
-		case q_quit:
+		case q_quit: case q_save:
 		{
-			//save_changes(student_list);
 			break;
 		}
 		case q_select:
@@ -69,17 +63,12 @@ enum Queries  query_switch(char* query, StudentList* student_list)
 			delete_query(query, student_list);
 			break;
 		}
-		case q_save:
-		{
-			save_changes(student_list);
-			break;
-		}
 		case q_help:
 		{
 			if (*query)
 			{
 				strip(&query);
-				help_query(find_item(query, query_names, LEN_QUERIES_TYPES));
+				help_query(find_item(query, query_names, MAX_LEN_QUERIES_TYPES));
 			}
 			else
 				help_query(0);
@@ -153,6 +142,9 @@ void select_query(StudentList* student_list, char* query)
 
 enum Operators find_operator(char* query)
 {
+	// array of the operator strings 
+	static char* operator_names[] = { [big_eq] = ">=", [bigger] = ">" ,[sml_eq] = "<=", [smaller] = "<", [not_eq ] = "!=" ,[eq] = "=" };
+
 	for (size_t len = strlen(query); len-- && !ispunct(query[len - 1]); query[len - 1] = '\0'); // clear right side
 	for (enum Operators i = big_eq; i <= eq; i++)
 		if (!strcmp(query, operator_names[i]))
@@ -191,45 +183,17 @@ void set_query(char* query, StudentList* student_list)
 		printf("  Invalid query.. for help type help set\n");
 }
 
-void save_changes(StudentList* student_list)
-{
-	FILE* out_file;
-	if ((out_file = fopen(FILE_NAME, "w")))
-	{
-		Student* cursor = student_list->head;
-		while (cursor)
-		{
-			save_student(cursor, out_file);
-			cursor = cursor->next;
-		}
-		fclose(out_file);
-		student_list->add_counter = 0;
-		student_list->update_counter = 0;
-		student_list->delete_counter = 0;
-		printf("  The changes saved successfully.");
-	}
-	else
-		printf("  Cannot open input file\n");
-}
-
 void print_state(StudentList* sl)
 {
 	printf("  added: %d, updated = %d, deleted: %d\n", sl->add_counter, sl->update_counter, sl->delete_counter);
 }
 
-void save_student(Student* s, FILE* out_file)
-{
-	for (enum Details course = c_lng; course < c_lng + COURSES_LEN; course++)
-	{
-		if (s->marks[course - c_lng] != -1)
-			fprintf(out_file, "%s,%s,%ld,%s,%d\n", s->first_name, s->last_name, s->id, detail_names[course], s->marks[course - c_lng]);
-	}
-}
-
-
-
 void print_selection(StudentList* student_list, enum Operators operater_code, enum Details detail, void* value)
 {
+	// array of pointers to compare functions
+	static int (*cmp_funcs[])(Student*, const void*) = { [f_name] = f_name_cmp, [l_name] = l_name_cmp, [id] = id_cmp,
+			[c_lng] = c_lang_cmp, [cmp_nt] = cmp_nt_cmp, [cs_f] = cs_f_cmp, [avrg] = avrg_cmp};
+
 	Student* cursor = student_list->head;
 	int result;
 	unsigned int selection_len = 0;

@@ -3,9 +3,6 @@
 static char* detail_names[] = { [f_name] = "first name",[l_name] = "last name",[id] = "id",[c_lng] = "C language",
 	[cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals",[avrg] = "average" };
 
-static char* operator_names[] = { [big_eq] = ">=",[bigger] = ">" ,[sml_eq] = "<=",[smaller] = "<",[not_eq ] = "!=" ,[eq] = "=" };
-
-
 int check_line(char** token, char* line, char* first_name,
 	char* last_name, long* _id, int* course_code, short* mark)
 {
@@ -272,17 +269,17 @@ int check_number(const char* txt)
 
 int check_id(const long id)
 {
-	return (id > 0 && id < MAX_ID);
+	return (id > 0 && id <= MAX_ID);
 }
 
 int check_mark(const short mark)
 {
-	return (mark >= 0 && mark < MAX_MARK);
+	return (mark >= 0 && mark <= MAX_VALUE_MARK);
 }
 
 int check_average(const float average)
 {
-	return (average >= 0 && average < MAX_MARK);
+	return (average >= 0 && average <= MAX_VALUE_MARK);
 }
 
 int is_ascii(const char* txt)

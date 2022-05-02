@@ -1,7 +1,6 @@
 #include "main.h"
 
-
-StudentList* read_students_data()
+StudentList* read_students_data(char file_name[])
 {
 	FILE* in_file;
 	long _id = 0;
@@ -20,7 +19,7 @@ StudentList* read_students_data()
 		student_list->delete_counter = 0;
 
 		// read data from the file
-		if ((in_file = fopen(FILE_NAME, "r")))
+		if ((in_file = fopen(file_name, "r")))
 		{
 			while (!feof(in_file))
 			{
@@ -319,6 +318,39 @@ void print_student(Student* s)
 		else
 			printf("  -        |");
 	printf(" %-7.1f | \n", s->marks_average);
+}
+
+void save_changes(StudentList* student_list, char file_name[])
+{
+	FILE* out_file;
+	if ((out_file = fopen(file_name, "w")))
+	{
+		Student* cursor = student_list->head;
+		while (cursor)
+		{
+			save_student(cursor, out_file);
+			cursor = cursor->next;
+		}
+		fclose(out_file);
+		student_list->add_counter = 0;
+		student_list->update_counter = 0;
+		student_list->delete_counter = 0;
+		printf("  The changes saved successfully.\n");
+	}
+	else
+		printf("  Cannot open input file\n");
+}
+
+void save_student(Student* s, FILE* out_file)
+{
+	// array of the detail names
+	static char* course_names[] = { [c_lng] = "C language", [cmp_nt] = "Computer Networks",[cs_f] = "CS Fundamentals"};
+	
+	for (enum Details course = c_lng; course < c_lng + COURSES_LEN; course++)
+	{
+		if (s->marks[course - c_lng] != -1)
+			fprintf(out_file, "%s,%s,%ld,%s,%d\n", s->first_name, s->last_name, s->id, course_names[course], s->marks[course - c_lng]);
+	}
 }
 
 void free_student(Student* s)

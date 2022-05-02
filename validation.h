@@ -1,6 +1,6 @@
 #define LEN_DETAILS_TYPES 7
 #define MAX_ID 999999999
-#define MAX_MARK 150
+#define MAX_VALUE_MARK 150
 #define SPECIAL_NOTS "<>!=@#$%^&*()/\\'?"
 
 

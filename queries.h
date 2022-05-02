@@ -1,5 +1,5 @@
-#define LEN_OPERATOR_TYPES 6
-#define LEN_QUERIES_TYPES 8
+#define MAX_MAX_LEN_OPERATOR_TYPES 6
+#define MAX_LEN_QUERIES_TYPES 8
 #define MAX_LEN_QUERY 90
 #define QUERY_LEN 7
 
@@ -50,7 +50,7 @@ enum Operators { big_eq = 1, bigger, sml_eq, smaller, not_eq , eq };
 
 
 // run the loop for data queries
-void run_queries_loop(StudentList* student_list);
+void run_queries_loop(StudentList* student_list, char file_name[]);
 
 // send the  query to the appropriate function
 enum Queries query_switch(char* querie, StudentList* student_list);
@@ -63,12 +63,6 @@ void set_query(char* query, StudentList* student_list);
 
 // print documentation for the queries server
 void help_query(enum Queries req);
-
-// save all the changes on the file
-void save_changes(StudentList* student_list);
-
-// print a single student on the given file
-void save_student(Student* s, FILE* out_file);
 
 // print the state of changes
 void print_state(StudentList* sl);
