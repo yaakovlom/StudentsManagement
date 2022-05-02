@@ -1,8 +1,5 @@
 ﻿################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
-SM.exe
-*.opendb
-/.vs/StudentsManagement/v17
-/.vs
+
 SM
