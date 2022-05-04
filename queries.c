@@ -157,7 +157,7 @@ void set_query(char* query, StudentList* student_list)
 	int course_code = 0, details_mount;
 	long _id = 0;
 	short mark = -1;
-	char line[MAX_LEN_LINE] = { 0 }, first_name[MAX_LEN_NAME] = { 0 }, last_name[MAX_LEN_NAME] = { 0 };
+	char first_name[MAX_LEN_NAME] = { 0 }, last_name[MAX_LEN_NAME] = { 0 };
 	details_mount = check_set_query(query, first_name, last_name, &_id, &course_code, &mark);
 	if (details_mount >= 2 && _id)
 	{

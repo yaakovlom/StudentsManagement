@@ -240,7 +240,10 @@ int check_set_query(char* query, char* first_name, char* last_name,
 					}
 				else
 					printf("  Invalid value '%s'. %s\n", token, help);
-			}}
+			}
+			case avrg:
+				printf("  Invalid detail '%s'. %s\n", detail_names[avrg], help);
+			}
 		}
 		token = strtok(NULL, ",=");
 	}

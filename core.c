@@ -93,7 +93,7 @@ enum State set_student(StudentList* student_list, const char* first_name,
 
 	if (student != NULL) // update student details and re put the student in order
 	{
-		if (resort = (*last_name) && (str_low_cmp(last_name, student->last_name)) != 0) // if the last name changed - re put in order
+		if ((resort = (*last_name) && (str_low_cmp(last_name, student->last_name)) != 0)) // if the last name changed - re put in order
 			student = remove_student_from_list(student_list, student->id);
 
 		if (update_student(student, first_name, last_name, course_code, mark) == NULL)
@@ -217,7 +217,7 @@ Student* remove_student_from_list(StudentList* student_list, long const id)
 Student* update_student(Student* student, const char* first_name, const char* last_name, const int course_code, const short mark)
 {
 	// update first and last name
-	if (*first_name && !update_first_name(student, first_name) || *last_name && !update_last_name(student, last_name))
+	if ((*first_name && !update_first_name(student, first_name)) || (*last_name && !update_last_name(student, last_name)))
 	{
 		printf(MEMORY_ERROR);
 		return NULL;
